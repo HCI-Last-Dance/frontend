@@ -1,8 +1,15 @@
-export default function App() {
+import React from 'react'
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import Home from './home'
+
+const App: React.FC = () => {
     return (
-        <div className='flex flex-col items-center justify-center h-screen bg-gray-100'>
-            <p className='text-4xl font-bold mb-4'>HCI</p>
-            <p className='text-lg text-gray-700'>Vite + React + Tailwind CSS 설정 완료</p>
-        </div>
+        <Router>
+            <Routes>
+                <Route path='/' element={<Home />} />
+            </Routes>
+        </Router>
     )
 }
+
+export default App
