@@ -19,7 +19,7 @@ const CommentWriteForm: React.FC<CommentWriteFormProps> = ({ user, commentType }
     return (
         <div className='flex items-start gap-5 w-full mt-2'>
             <img
-                src={user.user_profile_image}
+                src={user.profile_image}
                 alt='User'
                 className='w-10 h-10 rounded-full object-cover'
             />
@@ -28,7 +28,7 @@ const CommentWriteForm: React.FC<CommentWriteFormProps> = ({ user, commentType }
                 <textarea
                     value={text}
                     onChange={(e) => setText(e.target.value)}
-                    placeholder={`${user.user_name} 님의 ${commentType}을 남겨보세요!`}
+                    placeholder={`${user.name} 님의 ${commentType}을 남겨보세요!`}
                     className='w-[92%] h-full resize-none bg-transparent hidescroll focus:outline-none text-base text-black placeholder-zinc-500'
                 />
                 <button
