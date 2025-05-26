@@ -2,6 +2,8 @@ import React, { useState } from 'react'
 import { getWriteTime } from '../utils/getWriteTime'
 import { getTimeAgo } from '../utils/getTimeAgo'
 import type { CommentType, ReplyType } from '../types/comments'
+import CommentWriteForm from './commentWriteForm'
+import { TEST_USER } from '../data/users/test'
 
 type Reaction = {
     key: string
@@ -182,6 +184,7 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData }) => {
                     {repliesData?.map((reply) => (
                         <Comment key={reply.comment_id} comment={reply} repliesData={[]} />
                     ))}
+                    <CommentWriteForm key={TEST_USER.user_id} user={TEST_USER} commentType='대댓글' />
                 </div>
             )}
         </div>
