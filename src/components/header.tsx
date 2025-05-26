@@ -38,7 +38,7 @@ const Header: React.FC = () => {
                     }}
                 />
             </div>
-            
+
             {isUser ? (
                 <div className='flex items-center gap-4'>
                     {/* User Profile */}
@@ -55,15 +55,14 @@ const Header: React.FC = () => {
                         로그아웃
                     </button>
                 </div>
-            ) : 
+            ) : (
                 <button
                     className='text-sm px-4 py-2 bg-[#4F46E5] text-white rounded-md hover:bg-[#4338CA] transition-colors'
                     onClick={onClickLogin}
                 >
                     로그인
                 </button>
-            }
-
+            )}
         </header>
     )
 }
