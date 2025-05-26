@@ -1,17 +1,45 @@
 import React from 'react'
+import Header from '../components/header'
+import { VIDEOS } from '../data/videos/videos'
+import type { VideoType } from '../types/videos'
 
 const Home: React.FC = () => {
+    const onClickVideo = (videoId: string) => {
+        window.location.href = `/detail/${videoId}`
+    }
+
     return (
-        <div className='flex flex-col gap-10 items-center justify-center h-screen'>
-            <h1 className='text-4xl font-bold'>Home</h1>
-            <button
-                className='px-4 py-2 bg-blue-500 text-white rounded'
-                onClick={() => {
-                    window.location.href = '/detail'
-                }}
-            >
-                Go to Detail
-            </button>
+        <div className='flex flex-col min-h-screen'>
+            {/* Header */}
+            <Header />
+
+            {/* Main Content */}
+            <main className='flex flex-col gap-7 mt-10 flex-1'>
+                <div className='flex justify-between items-center'>
+                    <h2 className='text-2xl font-semibold text-zinc-600'>
+                        지금 사람들이 많이 보는 영상
+                    </h2>
+                </div>
+                <div className='grid grid-cols-2 md:grid-cols-4 gap-6'>
+                    {VIDEOS.map((video: VideoType) => (
+                        <div key={video.id} className='flex flex-col gap-1'>
+                            <img
+                                src={video.thumbnail}
+                                alt={video.title}
+                                className='w-full h-40 object-cover rounded-md cursor-pointer hover:opacity-80 transition-opacity'
+                                onClick={() => onClickVideo(video.id)}
+                            />
+                            <p
+                                className='text-base font-medium truncate mt-1 cursor-pointer'
+                                onClick={() => onClickVideo(video.id)}
+                            >
+                                {video.title}
+                            </p>
+                            <p className='text-sm text-zinc-500'>{video.date}</p>
+                        </div>
+                    ))}
+                </div>
+            </main>
         </div>
     )
 }

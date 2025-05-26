@@ -6,7 +6,7 @@ import { TEST_USER } from '../data/users/test'
 
 const Detail: React.FC = () => {
     return (
-        <div className='flex flex-col gap-10 items-center justify-center h-screen'>
+        <main className='flex flex-col gap-10 items-center justify-center h-screen'>
             <h1 className='text-4xl font-bold'>Detail</h1>
             <CommentWriteForm key={TEST_USER.id} user={TEST_USER} commentType='댓글' />
             <div className='flex flex-col gap-7 w-full'>
@@ -23,7 +23,7 @@ const Detail: React.FC = () => {
                     repliesData={COMMENT_DATA[0].replies || []}
                 />
             </div>
-        </div>
+        </main>
     )
 }
 
