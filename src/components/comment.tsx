@@ -1,4 +1,7 @@
 import React, { useState } from 'react'
+import { getWriteTime } from '../utils/getWriteTime'
+import { getTimeAgo } from '../utils/getTimeAgo'
+import type { CommentType, ReplyType } from '../types/comments'
 
 type Reaction = {
     key: string
@@ -10,24 +13,11 @@ type Reaction = {
 }
 
 type CommentProps = {
-    profileImage: string
-    author: string
-    timeTaken: string
-    timeAgo: string
-    content: string
-    replyIds: string[]
-    repliesData?: CommentProps[]
+    comment: CommentType
+    repliesData: ReplyType[]
 }
 
-const Comment: React.FC<CommentProps> = ({
-    profileImage,
-    author,
-    timeTaken,
-    timeAgo,
-    content,
-    replyIds,
-    repliesData = [],
-}) => {
+const Comment: React.FC<CommentProps> = ({ comment, repliesData }) => {
     const [showReplies, setShowReplies] = useState(false)
 
     const defaultReactions: Reaction[] = [
@@ -98,26 +88,28 @@ const Comment: React.FC<CommentProps> = ({
 
     return (
         <div className='flex flex-col w-full'>
-            <div className='flex w-full justify-between'>
+            <div className='flex justify-between'>
                 {/* Profile Image & Content */}
-                <div className='flex gap-5 items-start'>
+                <div className='flex gap-4 items-start'>
                     <img
-                        src={profileImage}
+                        src={comment.author_profile_image || '/icons/avatar.svg'}
                         alt='Profile'
                         className='w-10 h-10 rounded-full object-cover'
                     />
 
                     <div className='flex flex-col gap-2'>
                         <div className='flex items-center gap-4'>
-                            <span className='text-base font-semibold'>{author}</span>
+                            <span className='text-base font-semibold'>{comment.author_name}</span>
                             <div className='flex items-center gap-1'>
                                 <img src='/icons/write.svg' alt='Time Taken' className='w-3 h-3' />
                                 <span className='text-zinc-500 text-sm font-regular'>
-                                    {timeTaken}
+                                    {getWriteTime(comment.time_taken_to_write) || '알 수 없음'}
                                 </span>
                             </div>
                         </div>
-                        <p className='text-base text-black whitespace-pre-line'>{content}</p>
+                        <p className='text-base text-black whitespace-pre-line'>
+                            {comment.content}
+                        </p>
 
                         {/* Reactions */}
                         <div className='flex flex-wrap gap-2 mt-1'>
@@ -125,7 +117,7 @@ const Comment: React.FC<CommentProps> = ({
                                 <button
                                     key={r.key}
                                     onClick={() => toggleReaction(i)}
-                                    className={`flex items-center gap-1 border rounded-md px-[6px] py-[2px] transition w-fit ${
+                                    className={`flex items-center gap-1 border rounded-md px-[4px] py-[2px] transition w-fit ${
                                         r.selected ? `${r.selectedColorClass}` : r.colorClass
                                     }`}
                                 >
@@ -137,7 +129,7 @@ const Comment: React.FC<CommentProps> = ({
                         </div>
 
                         {/* Reply toggle */}
-                        {replyIds.length > 0 && (
+                        {comment.reply_ids && comment.reply_ids.length > 0 && (
                             <div
                                 className='mt-2 text-sm text-gray-600 cursor-pointer select-none'
                                 onClick={() => setShowReplies(!showReplies)}
@@ -150,7 +142,7 @@ const Comment: React.FC<CommentProps> = ({
                                             className='w-6 h-6'
                                         />
                                         <span className='font-regular text-base text-zinc-900'>
-                                            대댓글 ({replyIds.length})
+                                            대댓글 ({comment.reply_ids.length})
                                         </span>
                                     </div>
                                 ) : (
@@ -161,7 +153,7 @@ const Comment: React.FC<CommentProps> = ({
                                             className='w-6 h-6'
                                         />
                                         <span className='font-regular text-base text-zinc-900'>
-                                            대댓글 ({replyIds.length})
+                                            대댓글 ({comment.reply_ids.length})
                                         </span>
                                     </div>
                                 )}
@@ -178,15 +170,17 @@ const Comment: React.FC<CommentProps> = ({
                         className='w-6 h-6 cursor-pointer'
                         onClick={onClickReport}
                     />
-                    <span className='text-base text-zinc-500'>{timeAgo}</span>
+                    <span className='text-sm text-zinc-500'>
+                        {getTimeAgo(comment.timestamp) || '알 수 없음'}
+                    </span>
                 </div>
             </div>
 
             {/* Reply Comments */}
             {showReplies && (
                 <div className='flex flex-col gap-7 mt-5 ml-16'>
-                    {repliesData.map((reply, idx) => (
-                        <Comment key={replyIds[idx]} {...reply} />
+                    {repliesData?.map((reply) => (
+                        <Comment key={reply.comment_id} comment={reply} repliesData={[]} />
                     ))}
                 </div>
             )}
