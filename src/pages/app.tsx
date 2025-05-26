@@ -16,10 +16,7 @@ const AppRoutes: React.FC = () => {
             <Routes>
                 <Route path='/' element={<Home />} />
                 <Route path='/login' element={!isUser ? <Login /> : <Navigate to='/' />} />
-                <Route
-                    path='/detail/:videoId'
-                    element={<Detail />}
-                />
+                <Route path='/detail/:videoId' element={<Detail />} />
             </Routes>
         </>
     )

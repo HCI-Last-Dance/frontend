@@ -26,7 +26,10 @@ const Login: React.FC = () => {
         <div className='flex h-screen'>
             {/* Left Side */}
             <div className='w-2/5 bg-[#1E1B4B] text-white flex flex-col justify-between px-10 py-10'>
-                <div className='flex items-center gap-3 cursor-pointer' onClick={() => (window.location.href = '/')}>
+                <div
+                    className='flex items-center gap-3 cursor-pointer'
+                    onClick={() => (window.location.href = '/')}
+                >
                     <img src='/icons/logo.svg' alt='MeTube Logo' className='w-6 h-6' />
                     <span className='text-white text-lg font-medium'>MeTube</span>
                 </div>
