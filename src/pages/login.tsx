@@ -6,19 +6,20 @@ const Login: React.FC = () => {
 
     const onClickLogin = () => {
         if (id === 'test' && password === 'test1234') {
+            localStorage.setItem('isUser', 'true')
             alert('로그인 성공! 환영합니다, 테스트 유저님.')
             window.location.href = '/'
         } else {
-            alert('아이디 또는 비밀번호가 올바르지 않습니다.')
+            alert('입력이 올바르지 않습니다.\n아이디: test, 비밀번호: test1234로 로그인 해주세요.')
         }
     }
 
     const onClickGoogleLogin = () => {
-        alert('테스트 유저는 일반 로그인을 사용해주세요. 아이디: test, 비밀번호: test1234')
+        alert('테스트 유저는 일반 로그인을 사용해주세요.\n아이디: test, 비밀번호: test1234')
     }
 
     const onClickSignUp = () => {
-        alert('테스트 유저는 일반 로그인을 사용해주세요. 아이디: test, 비밀번호: test1234')
+        alert('테스트 유저는 일반 로그인을 사용해주세요.\n아이디: test, 비밀번호: test1234')
     }
 
     return (

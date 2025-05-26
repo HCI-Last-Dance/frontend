@@ -5,6 +5,15 @@ const Header: React.FC = () => {
         window.location.href = '/login'
     }
 
+    const onClickLogout = () => {
+        if (window.confirm('로그아웃 하시겠습니까?')) {
+            localStorage.removeItem('isUser')
+            window.location.href = '/login'
+        }
+    }
+
+    const isUser: boolean = localStorage.getItem('isUser') === 'true'
+
     return (
         <header className='flex w-full items-center justify-between px-16 py-6'>
             {/* Logo */}
@@ -29,14 +38,32 @@ const Header: React.FC = () => {
                     }}
                 />
             </div>
+            
+            {isUser ? (
+                <div className='flex items-center gap-4'>
+                    {/* User Profile */}
+                    <img
+                        src='/icons/avatar.svg'
+                        alt='User Profile'
+                        className='w-8 h-8 rounded-full'
+                    />
+                    {/* Logout Button */}
+                    <button
+                        className='text-sm px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors'
+                        onClick={onClickLogout}
+                    >
+                        로그아웃
+                    </button>
+                </div>
+            ) : 
+                <button
+                    className='text-sm px-4 py-2 bg-[#4F46E5] text-white rounded-md hover:bg-[#4338CA] transition-colors'
+                    onClick={onClickLogin}
+                >
+                    로그인
+                </button>
+            }
 
-            {/* Login Button */}
-            <button
-                className='text-sm px-4 py-2 bg-[#4F46E5] text-white rounded-md hover:bg-[#4338CA] transition-colors'
-                onClick={onClickLogin}
-            >
-                로그인
-            </button>
         </header>
     )
 }
