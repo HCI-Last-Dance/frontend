@@ -92,9 +92,9 @@ const Comment: React.FC<CommentProps> = ({
     }
 
     const onClickReport = (e: React.MouseEvent<HTMLImageElement>) => {
-        e.stopPropagation();
-        console.log('신고!!');
-    };
+        e.stopPropagation()
+        console.log('신고!!')
+    }
 
     return (
         <div className='flex flex-col w-full'>
@@ -172,7 +172,12 @@ const Comment: React.FC<CommentProps> = ({
 
                 {/* Report button and Time Ago */}
                 <div className='flex gap-3'>
-                    <img src='/icons/report.svg' alt='Report' className='w-6 h-6 cursor-pointer' onClick={onClickReport} />
+                    <img
+                        src='/icons/report.svg'
+                        alt='Report'
+                        className='w-6 h-6 cursor-pointer'
+                        onClick={onClickReport}
+                    />
                     <span className='text-base text-zinc-500'>{timeAgo}</span>
                 </div>
             </div>
