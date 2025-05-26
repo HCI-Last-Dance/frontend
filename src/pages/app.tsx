@@ -14,11 +14,11 @@ const AppRoutes: React.FC = () => {
         <>
             {!hideHeader && <Header />}
             <Routes>
-                <Route path='/' element={isUser ? <Home /> : <Navigate to='/login' />} />
+                <Route path='/' element={<Home />} />
                 <Route path='/login' element={!isUser ? <Login /> : <Navigate to='/' />} />
                 <Route
                     path='/detail/:videoId'
-                    element={isUser ? <Detail /> : <Navigate to='/login' />}
+                    element={<Detail />}
                 />
             </Routes>
         </>

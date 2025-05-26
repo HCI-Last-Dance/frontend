@@ -7,6 +7,8 @@ type CommentWriteFormProps = {
 }
 
 const CommentWriteForm: React.FC<CommentWriteFormProps> = ({ user, commentType }) => {
+    const isUser: boolean = localStorage.getItem('isUser') === 'true'
+
     const [text, setText] = useState('')
 
     const handleSubmit = () => {
@@ -28,7 +30,7 @@ const CommentWriteForm: React.FC<CommentWriteFormProps> = ({ user, commentType }
                 <textarea
                     value={text}
                     onChange={(e) => setText(e.target.value)}
-                    placeholder={`${user.name} 님의 ${commentType}을 남겨보세요!`}
+                    placeholder={isUser ? `${user.name} 님의 ${commentType}을 남겨보세요!` : '댓글을 작성하려면 로그인이 필요해요.'}
                     className='w-[92%] h-full resize-none bg-transparent hidescroll focus:outline-none text-base text-black placeholder-zinc-500'
                 />
                 <button

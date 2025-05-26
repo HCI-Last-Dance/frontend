@@ -8,6 +8,7 @@ const Header: React.FC = () => {
     const onClickLogout = () => {
         if (window.confirm('로그아웃 하시겠습니까?')) {
             localStorage.removeItem('isUser')
+            alert('로그아웃 되었습니다.\n로그인 페이지로 이동합니다.')
             window.location.href = '/login'
         }
     }
