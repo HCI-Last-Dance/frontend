@@ -4,7 +4,7 @@ import type { UserType } from '../types/users'
 
 type CommentWriteFormProps = {
     user: UserType
-    commentType: string // 예: '정보를 공유해보세요!', '의견을 남겨보세요!', '질문을 해보세요!'
+    commentType: string // 예: '댓글', '대댓글'
 }
 
 const CommentWriteForm: React.FC<CommentWriteFormProps> = ({ user, commentType }) => {
@@ -42,7 +42,7 @@ const CommentWriteForm: React.FC<CommentWriteFormProps> = ({ user, commentType }
                     onChange={(e) => setText(e.target.value)}
                     placeholder={
                         isUser
-                            ? `${user.name} 님의 ${commentType}`
+                            ? `${user.name} 님의 ${commentType}을 남겨보세요!`
                             : '댓글을 작성하려면 로그인이 필요해요.'
                     }
                     className='w-[92%] h-full resize-none bg-transparent hidescroll focus:outline-none text-base text-black placeholder-zinc-500'
