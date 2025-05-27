@@ -7,11 +7,15 @@ body {
 }
 
 main {
-    @apply max-w-[1080px] mx-auto;
+    @apply max-w-[55%] mx-auto;
 }
 
 header {
-    @apply w-full max-w-[1980px] mx-auto;
+    @apply w-full max-w-[95%] mx-auto;
+}
+
+.home {
+    @apply max-w-[1080px] mx-auto;
 }
 
 .hidescroll::-webkit-scrollbar {

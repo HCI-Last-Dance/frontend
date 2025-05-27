@@ -8,7 +8,7 @@ const Home: React.FC = () => {
     }
 
     return (
-        <main className='flex flex-col gap-7 mt-10 flex-1'>
+        <main className='flex flex-col gap-7 mt-10 flex-1 home'>
             <div className='flex gap-3 items-center'>
                 <img src='/icons/trending.svg' alt='Trending' className='w-6 h-6' />
                 <h2 className='text-2xl font-semibold text-zinc-800'>
