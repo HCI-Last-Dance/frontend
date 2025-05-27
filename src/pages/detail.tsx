@@ -7,6 +7,7 @@ import Tab from '../components/tab'
 import SortBox from '../components/sortBox'
 import Filter from '../components/filter'
 import ClusterBox from '../components/clusterBox'
+import Drawer from '../components/drawer'
 import { COMMENT_DATA_INFO } from '../data/comments/fnCY6ysVkAg/information'
 import { COMMENT_DATA_OPINION } from '../data/comments/fnCY6ysVkAg/opinion'
 import { COMMENT_DATA_QUESTION } from '../data/comments/fnCY6ysVkAg/question'
@@ -25,6 +26,7 @@ const Detail: React.FC = () => {
 
     const [onlyWithReplies, setOnlyWithReplies] = useState(false)
     const [onlyWithNonManipulated, setOnlyWithNonManipulated] = useState(false)
+    const [selectedClusterId, setSelectedClusterId] = useState<string | null>(null)
 
     useEffect(() => {
         const newSearchParams = new URLSearchParams(location.search)
@@ -79,21 +81,35 @@ const Detail: React.FC = () => {
             : sorted
     }, [rawComments, sortKey, onlyWithReplies])
 
-    const filteredCommentsWithNonManipulated = useMemo(() => {
-        const base = [...rawComments]
+    const filteredCommentsByCluster = useMemo(() => {
+        if (!selectedClusterId) return []
+
+        const shouldInclude = (manipulated: boolean) =>
+            onlyWithNonManipulated ? !manipulated : true
+
+        const filtered = COMMENT_DATA_OPINION.filter(
+            (comment) =>
+                comment.cluster === selectedClusterId && shouldInclude(comment.manipulated),
+        ).map((comment) => {
+            const replies =
+                comment.replies?.filter((reply) => shouldInclude(reply.manipulated)) || []
+            return {
+                ...comment,
+                replies,
+            }
+        })
+
         const sorted =
             sortKey === 'latest'
-                ? base.sort(
+                ? filtered.sort(
                       (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
                   )
-                : base.sort((a, b) => (b.reactions?.[sortKey] || 0) - (a.reactions?.[sortKey] || 0))
+                : filtered.sort(
+                      (a, b) => (b.reactions?.[sortKey] || 0) - (a.reactions?.[sortKey] || 0),
+                  )
 
-        return onlyWithNonManipulated ? sorted.filter((c) => !c.manipulated) : sorted
-    }, [rawComments, sortKey, onlyWithNonManipulated])
-
-    const handleClusterClick = (id: string) => {
-        console.log('클러스터 클릭됨:', id)
-    }
+        return sorted
+    }, [selectedClusterId, onlyWithNonManipulated, sortKey])
 
     return (
         <main className='flex flex-col gap-10 items-center justify-center'>
@@ -168,21 +184,61 @@ const Detail: React.FC = () => {
                                     key={cluster.id}
                                     cluster={cluster}
                                     isManipulationFilter={onlyWithNonManipulated}
-                                    onClick={() => handleClusterClick(cluster.id)}
+                                    onClick={() => setSelectedClusterId(cluster.id)}
                                 />
                             ))}
                     </div>
-                    {/* <div className='flex flex-col gap-7 w-full'>
-                        {filteredCommentsWithNonManipulated.length === 0 && <CommentNone />}
-                        {filteredCommentsWithNonManipulated.length > 0 &&
-                            filteredCommentsWithNonManipulated.map((comment) => (
+
+                    <Drawer open={!!selectedClusterId} onClose={() => setSelectedClusterId(null)}>
+                        <div className='flex flex-col gap-5 w-full'>
+                            {/* Cluster Selection */}
+                            <div className='flex items-center gap-3'>
+                                {CLUSTERS.map((cluster) => (
+                                    <button
+                                        key={cluster.id}
+                                        className={`px-4 py-2 rounded-lg text-base font-medium ${
+                                            selectedClusterId === cluster.id
+                                                ? 'bg-[#4F46E5] text-white'
+                                                : 'border-[#4F46E5] border text-[#4F46E5]'
+                                        }`}
+                                        onClick={() => setSelectedClusterId(cluster.id)}
+                                    >
+                                        {cluster.name}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Graph */}
+                            <div className='w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center mb-5'>
+                                <p className='text-gray-500'>클러스터 그래프 (미구현)</p>
+                            </div>
+
+                            {/* Cluster Information */}
+                            <div className='w-full flex justify-between items-center'>
+                                <span className='text-base font-semibold'>
+                                    의견 {filteredCommentsByCluster.length}개
+                                </span>
+                                <div className='flex items-center gap-4'>
+                                    <Filter
+                                        label='조작 댓글 필터링 켜기'
+                                        filterValue={onlyWithNonManipulated}
+                                        setFilterValue={setOnlyWithNonManipulated}
+                                    />
+                                    <SortBox sortKey={sortKey} setSortKey={setSortKey} />
+                                </div>
+                            </div>
+
+                            {/* Comments in Cluster */}
+                            {filteredCommentsByCluster.length === 0 && <CommentNone />}
+                            {filteredCommentsByCluster.map((c) => (
                                 <Comment
-                                    key={comment.comment_id}
-                                    comment={comment}
-                                    repliesData={comment.replies || []}
+                                    key={c.comment_id}
+                                    comment={c}
+                                    repliesData={'replies' in c ? c.replies || [] : []}
                                 />
                             ))}
-                    </div> */}
+                        </div>
+                    </Drawer>
                 </>
             )}
 
