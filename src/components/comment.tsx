@@ -97,6 +97,12 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData }) => {
                         src={comment.author_profile_image || '/icons/avatar.svg'}
                         alt='Profile'
                         className='w-10 h-10 rounded-full object-cover'
+                        onError={(e) => {
+                            const target = e.currentTarget
+                            if (target.src !== window.location.origin + '/icons/profile.svg') {
+                                target.src = '/icons/profile.svg'
+                            }
+                        }}
                     />
 
                     <div className='flex flex-col gap-2'>
@@ -180,7 +186,7 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData }) => {
 
             {/* Reply Comments */}
             {showReplies && (
-                <div className='flex flex-col gap-7 mt-5 ml-16'>
+                <div className='flex flex-col gap-7 mt-5 ml-[60px]'>
                     {repliesData?.map((reply) => (
                         <Comment key={reply.comment_id} comment={reply} repliesData={[]} />
                     ))}

@@ -18,6 +18,7 @@ const AppRoutes: React.FC = () => {
                 <Route path='/login' element={!isUser ? <Login /> : <Navigate to='/' />} />
                 <Route path='/detail/:videoId' element={<Detail />} />
             </Routes>
+            <div className='h-40' />
         </>
     )
 }
