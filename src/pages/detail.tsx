@@ -1,7 +1,8 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import Comment from '../components/comment'
 import CommentWriteForm from '../components/commentWriteForm'
+import Tab from '../components/tab'
 import { COMMENT_DATA_INFO } from '../data/comments/fnCY6ysVkAg/information'
 import { COMMENT_DATA_OPINION } from '../data/comments/fnCY6ysVkAg/opinion'
 import { COMMENT_DATA_QUESTION } from '../data/comments/fnCY6ysVkAg/question'
@@ -11,8 +12,14 @@ import { VIDEOS } from '../data/videos/videos'
 const Detail: React.FC = () => {
     const { videoId } = useParams<{ videoId: string }>()
     const location = useLocation()
-    const searchParams = new URLSearchParams(location.search)
-    const tab = searchParams.get('tab')
+    const initialTab = new URLSearchParams(location.search).get('tab') || 'information'
+    const [tab, setTab] = useState(initialTab)
+
+    useEffect(() => {
+        const newSearchParams = new URLSearchParams(location.search)
+        newSearchParams.set('tab', tab)
+        window.history.replaceState(null, '', `${location.pathname}?${newSearchParams.toString()}`)
+    }, [tab, location.pathname])
 
     const video = VIDEOS.find((v) => v.id === videoId)
     if (!video)
@@ -22,11 +29,12 @@ const Detail: React.FC = () => {
 
     const COMMENT_DATA = useMemo(() => {
         switch (tab) {
+            case 'information':
+                return COMMENT_DATA_INFO
             case 'opinion':
                 return COMMENT_DATA_OPINION
             case 'question':
                 return COMMENT_DATA_QUESTION
-            case 'information':
             default:
                 return COMMENT_DATA_INFO
         }
@@ -51,7 +59,20 @@ const Detail: React.FC = () => {
                 <p className='text-base text-zinc-500'>{video.date}</p>
             </div>
 
+            {/* Tab Section */}
+            <Tab tab={tab} setTab={setTab} />
+
             {/* Comments Section */}
+            <div className='w-full text-start'>
+                <span className='text-base font-semibold'>
+                    {tab === 'information'
+                        ? '정보성 댓글'
+                        : tab === 'opinion'
+                          ? '의견 댓글'
+                          : '질문'}{' '}
+                    {COMMENT_DATA.length}개
+                </span>
+            </div>
             <CommentWriteForm key={TEST_USER.id} user={TEST_USER} commentType='댓글' />
             <div className='flex flex-col gap-7 w-full'>
                 {COMMENT_DATA.map((comment) => (

@@ -29,7 +29,7 @@ const CommentWriteForm: React.FC<CommentWriteFormProps> = ({ user, commentType }
     const isActive = text.trim().length > 0
 
     return (
-        <div className='flex items-start gap-5 w-full mt-2'>
+        <div className='flex items-start gap-5 w-full'>
             <img
                 src={user.profile_image}
                 alt='User'
