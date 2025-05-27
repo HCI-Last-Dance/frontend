@@ -71,7 +71,11 @@ const Detail: React.FC = () => {
                             정보성 댓글 {COMMENT_DATA.length}개
                         </span>
                     </div>
-                    <CommentWriteForm key={TEST_USER.id} user={TEST_USER} commentType='댓글' />
+                    <CommentWriteForm
+                        key={TEST_USER.id}
+                        user={TEST_USER}
+                        commentType='정보를 공유해보세요!'
+                    />
                     <div className='flex flex-col gap-7 w-full'>
                         {COMMENT_DATA.length === 0 && <CommentNone />}
                         {COMMENT_DATA.length > 0 &&
@@ -93,7 +97,11 @@ const Detail: React.FC = () => {
                             의견 댓글 {COMMENT_DATA.length}개
                         </span>
                     </div>
-                    <CommentWriteForm key={TEST_USER.id} user={TEST_USER} commentType='의견' />
+                    <CommentWriteForm
+                        key={TEST_USER.id}
+                        user={TEST_USER}
+                        commentType='의견을 나눠보세요!'
+                    />
                     <div className='flex flex-col gap-7 w-full'>
                         {COMMENT_DATA.length === 0 && <CommentNone />}
                         {COMMENT_DATA.length > 0 &&
@@ -115,7 +123,11 @@ const Detail: React.FC = () => {
                             질문 {COMMENT_DATA.length}개
                         </span>
                     </div>
-                    <CommentWriteForm key={TEST_USER.id} user={TEST_USER} commentType='질문' />
+                    <CommentWriteForm
+                        key={TEST_USER.id}
+                        user={TEST_USER}
+                        commentType='질문을 남겨보세요!'
+                    />
                     <div className='flex flex-col gap-7 w-full'>
                         {COMMENT_DATA.length === 0 && <CommentNone />}
                         {COMMENT_DATA.length > 0 &&

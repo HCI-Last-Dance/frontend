@@ -221,7 +221,11 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData }) => {
                     {repliesData?.map((reply) => (
                         <Comment key={reply.comment_id} comment={reply} repliesData={[]} />
                     ))}
-                    <CommentWriteForm key={TEST_USER.id} user={TEST_USER} commentType='대댓글' />
+                    <CommentWriteForm
+                        key={TEST_USER.id}
+                        user={TEST_USER}
+                        commentType='대댓글을 남겨보세요!'
+                    />
                 </div>
             )}
 
