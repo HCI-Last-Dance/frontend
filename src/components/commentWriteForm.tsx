@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import type { UserType } from '../types/users'
 
 type CommentWriteFormProps = {
@@ -7,11 +8,20 @@ type CommentWriteFormProps = {
 }
 
 const CommentWriteForm: React.FC<CommentWriteFormProps> = ({ user, commentType }) => {
+    const navigate = useNavigate()
+
     const isUser: boolean = localStorage.getItem('isUser') === 'true'
 
     const [text, setText] = useState('')
 
     const handleSubmit = () => {
+        if (!isUser) {
+            const confirmLogin = window.confirm(
+                '댓글을 작성하려면 로그인이 필요합니다.\n로그인 화면으로 이동하시겠습니까?',
+            )
+            if (confirmLogin) navigate('/login')
+            return
+        }
         if (text.trim() === '') return
         console.log('작성된 댓글:', text)
     }
