@@ -18,7 +18,7 @@ const Header: React.FC = () => {
             setToast({ type: 'success', message: '로그아웃 되었습니다.' })
             setTimeout(() => {
                 setToast(null)
-                window.location.href = '/'
+                window.location.reload()
             }, 1000)
         }
     }
