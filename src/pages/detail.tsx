@@ -159,7 +159,7 @@ const Detail: React.FC = () => {
                 </>
             )}
 
-            {tab === 'opinion' && ( // TODO: 이후 클러스터로 변경
+            {tab === 'opinion' && (
                 <>
                     <div className='w-full flex justify-between items-center'>
                         <div className='flex flex-col gap-1'>
@@ -208,7 +208,7 @@ const Detail: React.FC = () => {
                                 ))}
                             </div>
 
-                            {/* Graph */}
+                            {/* Graph - TODO */}
                             <div className='w-full h-64 bg-gray-100 rounded-lg flex items-center justify-center mb-5'>
                                 <p className='text-gray-500'>클러스터 그래프 (미구현)</p>
                             </div>

@@ -56,9 +56,9 @@ const ClusterBox: React.FC<ClusterBoxProps> = ({ cluster, isManipulationFilter, 
                 </div>
             </div>
 
-            {/* Graph */}
-            <div className='flex items-center justify-center'>
-                <img src='/icons/graph_placeholder.svg' alt='graph' className='h-full' />
+            {/* Graph - TODO */}
+            <div className='h-full p-10 bg-gray-100 rounded-lg flex items-center justify-center'>
+                <p className='text-gray-500'>클러스터 그래프 (미구현)</p>
             </div>
         </div>
     )
