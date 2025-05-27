@@ -1,4 +1,6 @@
 import React, { useState } from 'react'
+import ReportPopover from './reportPopover'
+import Toast from './toast'
 import { getWriteTime } from '../utils/getWriteTime'
 import { getTimeAgo } from '../utils/getTimeAgo'
 import type { CommentType, ReplyType } from '../types/comments'
@@ -21,6 +23,12 @@ type CommentProps = {
 
 const Comment: React.FC<CommentProps> = ({ comment, repliesData }) => {
     const [showReplies, setShowReplies] = useState(false)
+    const [showReport, setShowReport] = useState(false)
+    const [toast, setToast] = useState<{
+        type: 'success' | 'failure'
+        message: string
+        errorDetail?: string
+    } | null>(null)
 
     const defaultReactions: Reaction[] = [
         {
@@ -85,7 +93,18 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData }) => {
 
     const onClickReport = (e: React.MouseEvent<HTMLImageElement>) => {
         e.stopPropagation()
-        console.log('신고!!')
+        showReport ? setShowReport(false) : setShowReport(true)
+    }
+
+    const handleReportSubmit = (reason: string, commentID: string) => {
+        console.log(`신고 사유: ${reason}, 댓글 ID: ${commentID}`)
+        setShowReport(false)
+        setToast({ type: 'success', message: '신고가 성공적으로 이루어졌습니다.' })
+        setTimeout(() => setToast(null), 1500)
+    }
+
+    const handleReportCancel = () => {
+        setShowReport(false)
     }
 
     return (
@@ -171,9 +190,9 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData }) => {
                 </div>
 
                 {/* Report button and Time Ago */}
-                <div className='flex gap-3 min-w-[70px]'>
+                <div className='flex items-center gap-3 min-w-[70px] relative'>
                     <img
-                        src='/icons/report.svg'
+                        src={showReport ? '/icons/reportSelected.svg' : '/icons/report.svg'}
                         alt='Report'
                         className='w-6 h-6 cursor-pointer'
                         onClick={onClickReport}
@@ -181,6 +200,18 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData }) => {
                     <span className='text-sm text-zinc-500'>
                         {getTimeAgo(comment.timestamp) || '알 수 없음'}
                     </span>
+
+                    {/* Report Popover */}
+                    {showReport && (
+                        <div className='absolute top-[28px] right-[60px] z-50'>
+                            <ReportPopover
+                                onSubmit={(reason) =>
+                                    handleReportSubmit(reason, comment.comment_id)
+                                }
+                                onCancel={handleReportCancel}
+                            />
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -192,6 +223,11 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData }) => {
                     ))}
                     <CommentWriteForm key={TEST_USER.id} user={TEST_USER} commentType='대댓글' />
                 </div>
+            )}
+
+            {/* Toast Notification */}
+            {toast && (
+                <Toast type={toast.type} message={toast.message} errorDetail={toast.errorDetail} />
             )}
         </div>
     )
