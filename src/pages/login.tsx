@@ -1,25 +1,55 @@
 import React, { useState } from 'react'
+import Toast from '../components/toast'
 
 const Login: React.FC = () => {
     const [id, setId] = useState('')
     const [password, setPassword] = useState('')
+    const [toast, setToast] = useState<{
+        type: 'success' | 'failure'
+        message: string
+        errorDetail?: string
+    } | null>(null)
 
     const onClickLogin = () => {
         if (id === 'test' && password === 'test1234') {
             localStorage.setItem('isUser', 'true')
-            alert('로그인 성공! 환영합니다, 테스트 유저님.')
-            window.location.href = '/'
+            setToast({ type: 'success', message: '로그인 성공! 환영합니다, 테스트 유저님.' })
+            setTimeout(() => {
+                setToast(null)
+                window.location.href = '/'
+            }, 1000)
         } else {
-            alert('입력이 올바르지 않습니다.\n아이디: test, 비밀번호: test1234로 로그인 해주세요.')
+            setToast({
+                type: 'failure',
+                message: '로그인에 실패했습니다.',
+                errorDetail: '아이디: test, 비밀번호: test1234로 로그인 해주세요.',
+            })
+            setTimeout(() => {
+                setToast(null)
+            }, 2000)
         }
     }
 
     const onClickGoogleLogin = () => {
-        alert('테스트 유저는 일반 로그인을 사용해주세요.\n아이디: test, 비밀번호: test1234')
+        setToast({
+            type: 'failure',
+            message: '테스트 유저는 일반 로그인을 사용해주세요.',
+            errorDetail: '아이디: test, 비밀번호: test1234로 로그인 해주세요.',
+        })
+        setTimeout(() => {
+            setToast(null)
+        }, 2000)
     }
 
     const onClickSignUp = () => {
-        alert('테스트 유저는 일반 로그인을 사용해주세요.\n아이디: test, 비밀번호: test1234')
+        setToast({
+            type: 'failure',
+            message: '테스트 유저는 일반 로그인을 사용해주세요.',
+            errorDetail: '아이디: test, 비밀번호: test1234로 로그인 해주세요.',
+        })
+        setTimeout(() => {
+            setToast(null)
+        }, 2000)
     }
 
     return (
@@ -95,6 +125,11 @@ const Login: React.FC = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Toast Notification */}
+            {toast && (
+                <Toast type={toast.type} message={toast.message} errorDetail={toast.errorDetail} />
+            )}
         </div>
     )
 }

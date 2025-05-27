@@ -1,6 +1,13 @@
-import React from 'react'
+import React, { useState } from 'react'
+import Toast from './toast'
 
 const Header: React.FC = () => {
+    const [toast, setToast] = useState<{
+        type: 'success' | 'failure'
+        message: string
+        errorDetail?: string
+    } | null>(null)
+
     const onClickLogin = () => {
         window.location.href = '/login'
     }
@@ -8,8 +15,11 @@ const Header: React.FC = () => {
     const onClickLogout = () => {
         if (window.confirm('로그아웃 하시겠습니까?')) {
             localStorage.removeItem('isUser')
-            alert('로그아웃 되었습니다.\n로그인 페이지로 이동합니다.')
-            window.location.href = '/login'
+            setToast({ type: 'success', message: '로그아웃 되었습니다.' })
+            setTimeout(() => {
+                setToast(null)
+                window.location.href = '/'
+            }, 1000)
         }
     }
 
@@ -63,6 +73,11 @@ const Header: React.FC = () => {
                 >
                     로그인
                 </button>
+            )}
+
+            {/* Toast Notification */}
+            {toast && (
+                <Toast type={toast.type} message={toast.message} errorDetail={toast.errorDetail} />
             )}
         </header>
     )
