@@ -1,5 +1,5 @@
 import React from 'react'
-import { useParams } from 'react-router-dom'
+import { useLocation, useParams } from 'react-router-dom'
 import Comment from '../components/comment'
 import CommentWriteForm from '../components/commentWriteForm'
 import { COMMENT_DATA } from '../data/comments/7bdoq_zUvEs/information'
@@ -8,6 +8,11 @@ import { VIDEOS } from '../data/videos/videos'
 
 const Detail: React.FC = () => {
     const { videoId } = useParams<{ videoId: string }>()
+    const location = useLocation()
+    const searchParams = new URLSearchParams(location.search)
+    const tab = searchParams.get('tab')
+    console.log('Video ID:', videoId)
+    console.log('Tab:', tab)
     const video = VIDEOS.find((v) => v.id === videoId)
     if (!video)
         return (

@@ -4,7 +4,7 @@ import type { VideoType } from '../types/videos'
 
 const Home: React.FC = () => {
     const onClickVideo = (videoId: string) => {
-        window.location.href = `/detail/${videoId}`
+        window.location.href = `/detail/${videoId}?tab=information`
     }
 
     return (
