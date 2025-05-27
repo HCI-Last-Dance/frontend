@@ -159,7 +159,7 @@ const Detail: React.FC = () => {
                         <span className='text-base font-semibold'>
                             질문 {sortedComments.length}개
                         </span>
-                        <div className='flex items-center gap-6'>
+                        <div className='flex items-center gap-4'>
                             <Filter
                                 label='대댓글 달린 댓글만 보기'
                                 filterValue={onlyWithReplies}
