@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import Comment from '../components/comment'
 import CommentWriteForm from '../components/commentWriteForm'
-import { COMMENT_DATA } from '../data/comments/7bdoq_zUvEs/information'
+import { COMMENT_DATA_INFO } from '../data/comments/fnCY6ysVkAg/information'
+import { COMMENT_DATA_OPINION } from '../data/comments/fnCY6ysVkAg/opinion'
+import { COMMENT_DATA_QUESTION } from '../data/comments/fnCY6ysVkAg/question'
 import { TEST_USER } from '../data/users/test'
 import { VIDEOS } from '../data/videos/videos'
 
@@ -11,13 +13,24 @@ const Detail: React.FC = () => {
     const location = useLocation()
     const searchParams = new URLSearchParams(location.search)
     const tab = searchParams.get('tab')
-    console.log('Video ID:', videoId)
-    console.log('Tab:', tab)
+
     const video = VIDEOS.find((v) => v.id === videoId)
     if (!video)
         return (
             <div className='p-10 text-center text-xl text-red-500'>비디오를 찾을 수 없습니다.</div>
         )
+
+    const COMMENT_DATA = useMemo(() => {
+        switch (tab) {
+            case 'opinion':
+                return COMMENT_DATA_OPINION
+            case 'question':
+                return COMMENT_DATA_QUESTION
+            case 'information':
+            default:
+                return COMMENT_DATA_INFO
+        }
+    }, [tab])
 
     return (
         <main className='flex flex-col gap-10 items-center justify-center'>

@@ -90,9 +90,9 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData }) => {
 
     return (
         <div className='flex flex-col w-full'>
-            <div className='flex justify-between'>
+            <div className='flex justify-between items-start w-full'>
                 {/* Profile Image & Content */}
-                <div className='flex gap-4 items-start'>
+                <div className='flex gap-4 items-start w-full max-w-[85%]'>
                     <img
                         src={comment.author_profile_image || '/icons/avatar.svg'}
                         alt='Profile'
@@ -125,13 +125,13 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData }) => {
                                 <button
                                     key={r.key}
                                     onClick={() => toggleReaction(i)}
-                                    className={`flex items-center gap-1 border rounded-md px-[4px] py-[2px] transition w-fit ${
+                                    className={`flex items-center gap-1 border rounded-md px-[3px] py-[2px] transition w-fit ${
                                         r.selected ? `${r.selectedColorClass}` : r.colorClass
                                     }`}
                                 >
                                     <img src={r.iconSrc} alt={r.label} className='w-4 h-4' />
-                                    <span className='font-regular text-sm'>{r.label}</span>
-                                    <span className='font-regular text-sm'>({r.count})</span>
+                                    <span className='font-regular text-[13px]'>{r.label}</span>
+                                    <span className='font-regular text-[13px]'>({r.count})</span>
                                 </button>
                             ))}
                         </div>
@@ -171,7 +171,7 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData }) => {
                 </div>
 
                 {/* Report button and Time Ago */}
-                <div className='flex gap-3'>
+                <div className='flex gap-3 min-w-[70px]'>
                     <img
                         src='/icons/report.svg'
                         alt='Report'

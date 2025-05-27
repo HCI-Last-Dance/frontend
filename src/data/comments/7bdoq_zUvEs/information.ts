@@ -1,4 +1,4 @@
-export const COMMENT_DATA = [
+export const COMMENT_DATA_INFO = [
     {
         comment_id: 'UgwCrQZOHyhGiwZcSBp4AaABAg',
         author_id: 'UCsO1vitl7PT9nZYMHl0Pksw',
