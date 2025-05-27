@@ -31,7 +31,7 @@ export type CommentType = {
     reactions: ReactionCountsType
     time_taken_to_write: number
     manipulated: boolean
-    tab?: string | null
+    tab?: string | string[] | null
     cluster?: string | null
     reply_ids?: string[]
     replies?: ReplyType[]

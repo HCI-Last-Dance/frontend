@@ -113,7 +113,7 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData }) => {
                 {/* Profile Image & Content */}
                 <div className='flex gap-4 items-start w-full max-w-[85%]'>
                     <img
-                        src={comment.author_profile_image || '/icons/avatar.svg'}
+                        src={comment.author_profile_image || '/icons/profile.svg'}
                         alt='Profile'
                         className='w-10 h-10 rounded-full object-cover'
                         onError={(e) => {
