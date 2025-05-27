@@ -19,10 +19,12 @@ type Reaction = {
 type CommentProps = {
     comment: CommentType
     repliesData: ReplyType[]
+    isReply?: boolean
 }
 
-const Comment: React.FC<CommentProps> = ({ comment, repliesData }) => {
+const Comment: React.FC<CommentProps> = ({ comment, repliesData, isReply = false }) => {
     const [showReplies, setShowReplies] = useState(false)
+    const [showReplyForm, setShowReplyForm] = useState(false)
     const [showReport, setShowReport] = useState(false)
     const [toast, setToast] = useState<{
         type: 'success' | 'failure'
@@ -156,7 +158,7 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData }) => {
                         </div>
 
                         {/* Reply toggle */}
-                        {comment.reply_ids && comment.reply_ids.length > 0 && (
+                        {!isReply && comment.reply_ids && comment.reply_ids.length > 0 ? (
                             <div
                                 className='mt-2 text-sm text-gray-600 cursor-pointer select-none'
                                 onClick={() => setShowReplies(!showReplies)}
@@ -168,7 +170,7 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData }) => {
                                             alt='Hide Replies'
                                             className='w-6 h-6'
                                         />
-                                        <span className='font-regular text-base text-zinc-900'>
+                                        <span className='font-regular text-sm text-zinc-900'>
                                             대댓글 ({comment.reply_ids.length})
                                         </span>
                                     </div>
@@ -179,12 +181,28 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData }) => {
                                             alt='Show Replies'
                                             className='w-6 h-6'
                                         />
-                                        <span className='font-regular text-base text-zinc-900'>
+                                        <span className='font-regular text-sm text-zinc-900'>
                                             대댓글 ({comment.reply_ids.length})
                                         </span>
                                     </div>
                                 )}
                             </div>
+                        ) : (
+                            !isReply && (
+                                <div
+                                    className='mt-2 text-sm text-gray-600 cursor-pointer select-none flex items-center gap-2 w-fit'
+                                    onClick={() => setShowReplyForm((prev) => !prev)}
+                                >
+                                    <img
+                                        src='/icons/curvedArrow.svg'
+                                        alt='Reply'
+                                        className='w-5 h-4'
+                                    />
+                                    <span className='text-sm text-zinc-900 font-medium mt-1'>
+                                        답글 쓰기
+                                    </span>
+                                </div>
+                            )
                         )}
                     </div>
                 </div>
@@ -216,14 +234,32 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData }) => {
             </div>
 
             {/* Reply Comments */}
-            {showReplies && (
+            {showReplies && comment.reply_ids && comment.reply_ids.length > 0 && (
                 <div className='flex flex-col gap-7 mt-5 ml-[60px]'>
                     {repliesData?.map((reply) => (
-                        <Comment key={reply.comment_id} comment={reply} repliesData={[]} />
+                        <Comment
+                            key={reply.comment_id}
+                            comment={reply}
+                            repliesData={[]}
+                            isReply={true}
+                        />
                     ))}
                     <CommentWriteForm key={TEST_USER.id} user={TEST_USER} commentType='대댓글' />
                 </div>
             )}
+
+            {/* Reply form if no reply exists */}
+            {!isReply &&
+                showReplyForm &&
+                (!comment.reply_ids || comment.reply_ids.length === 0) && (
+                    <div className='mt-5 ml-[60px]'>
+                        <CommentWriteForm
+                            key={TEST_USER.id}
+                            user={TEST_USER}
+                            commentType='대댓글'
+                        />
+                    </div>
+                )}
 
             {/* Toast Notification */}
             {toast && (

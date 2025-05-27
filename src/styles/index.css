@@ -7,7 +7,7 @@ body {
 }
 
 main {
-    @apply max-w-[55%] mx-auto;
+    @apply max-w-[60%] mx-auto;
 }
 
 header {
