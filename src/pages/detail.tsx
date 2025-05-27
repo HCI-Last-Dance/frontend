@@ -64,33 +64,71 @@ const Detail: React.FC = () => {
             <Tab tab={tab} setTab={setTab} />
 
             {/* Comments Section */}
-            <div className='w-full text-start'>
-                <span className='text-base font-semibold'>
-                    {tab === 'information'
-                        ? '정보성 댓글'
-                        : tab === 'opinion'
-                          ? '의견 댓글'
-                          : '질문'}{' '}
-                    {COMMENT_DATA.length}개
-                </span>
-            </div>
-            <CommentWriteForm key={TEST_USER.id} user={TEST_USER} commentType='댓글' />
-            <div className='flex flex-col gap-7 w-full'>
-                {COMMENT_DATA.length === 0 && <CommentNone />}
-                {COMMENT_DATA.length > 0 &&
-                    COMMENT_DATA.map((comment) => (
-                        <Comment
-                            key={comment.comment_id}
-                            comment={comment}
-                            repliesData={comment.replies || []}
-                        />
-                    ))}
-                {/* <Comment
-                    key={COMMENT_DATA[0].comment_id}
-                    comment={COMMENT_DATA[0]}
-                    repliesData={COMMENT_DATA[0].replies || []}
-                /> */}
-            </div>
+            {tab === 'information' && (
+                <>
+                    <div className='w-full text-start'>
+                        <span className='text-base font-semibold'>
+                            정보성 댓글 {COMMENT_DATA.length}개
+                        </span>
+                    </div>
+                    <CommentWriteForm key={TEST_USER.id} user={TEST_USER} commentType='댓글' />
+                    <div className='flex flex-col gap-7 w-full'>
+                        {COMMENT_DATA.length === 0 && <CommentNone />}
+                        {COMMENT_DATA.length > 0 &&
+                            COMMENT_DATA.map((comment) => (
+                                <Comment
+                                    key={comment.comment_id}
+                                    comment={comment}
+                                    repliesData={comment.replies || []}
+                                />
+                            ))}
+                    </div>
+                </>
+            )}
+
+            {tab === 'opinion' && ( // TODO: 이후 클러스터로 변경
+                <>
+                    <div className='w-full text-start'>
+                        <span className='text-base font-semibold'>
+                            의견 댓글 {COMMENT_DATA.length}개
+                        </span>
+                    </div>
+                    <CommentWriteForm key={TEST_USER.id} user={TEST_USER} commentType='의견' />
+                    <div className='flex flex-col gap-7 w-full'>
+                        {COMMENT_DATA.length === 0 && <CommentNone />}
+                        {COMMENT_DATA.length > 0 &&
+                            COMMENT_DATA.map((comment) => (
+                                <Comment
+                                    key={comment.comment_id}
+                                    comment={comment}
+                                    repliesData={comment.replies || []}
+                                />
+                            ))}
+                    </div>
+                </>
+            )}
+
+            {tab === 'question' && (
+                <>
+                    <div className='w-full text-start'>
+                        <span className='text-base font-semibold'>
+                            질문 {COMMENT_DATA.length}개
+                        </span>
+                    </div>
+                    <CommentWriteForm key={TEST_USER.id} user={TEST_USER} commentType='질문' />
+                    <div className='flex flex-col gap-7 w-full'>
+                        {COMMENT_DATA.length === 0 && <CommentNone />}
+                        {COMMENT_DATA.length > 0 &&
+                            COMMENT_DATA.map((comment) => (
+                                <Comment
+                                    key={comment.comment_id}
+                                    comment={comment}
+                                    repliesData={comment.replies || []}
+                                />
+                            ))}
+                    </div>
+                </>
+            )}
         </main>
     )
 }
