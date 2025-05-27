@@ -11,7 +11,7 @@ const Tab: React.FC<{
     ]
 
     return (
-        <div className='flex items-center self-start gap-2 border border-zinc-200 rounded-md p-[6px] bg-white'>
+        <div className='flex items-center self-start gap-2 border border-zinc-200 rounded-md p-1 bg-white'>
             {tabs.map((t) => {
                 const isActive = tab === t.key
                 return (
