@@ -28,7 +28,7 @@ export const CLUSTERS: ClusterType[] = [
     {
         id: 'cluster_E',
         name: '전 정권과 전교조',
-        description: '전 정권·전교조 중심의 반말, 강한 어투 (조작 시나리오 포함)',
+        description: '전 정권·전교조 중심의 반말, 강한 어투',
         tags: ['부정적', '#정치적 비판', '#무능함'],
     },
 ]

@@ -6,9 +6,11 @@ import CommentWriteForm from '../components/commentWriteForm'
 import Tab from '../components/tab'
 import SortBox from '../components/sortBox'
 import Filter from '../components/filter'
+import ClusterBox from '../components/clusterBox'
 import { COMMENT_DATA_INFO } from '../data/comments/fnCY6ysVkAg/information'
 import { COMMENT_DATA_OPINION } from '../data/comments/fnCY6ysVkAg/opinion'
 import { COMMENT_DATA_QUESTION } from '../data/comments/fnCY6ysVkAg/question'
+import { CLUSTERS } from '../data/clusters/fnCY6ysVkAg/cluster'
 import { TEST_USER } from '../data/users/test'
 import { VIDEOS } from '../data/videos/videos'
 
@@ -22,6 +24,7 @@ const Detail: React.FC = () => {
     const [sortKey, setSortKey] = useState<SortKey>('useful')
 
     const [onlyWithReplies, setOnlyWithReplies] = useState(false)
+    const [onlyWithNonManipulated, setOnlyWithNonManipulated] = useState(false)
 
     useEffect(() => {
         const newSearchParams = new URLSearchParams(location.search)
@@ -62,7 +65,7 @@ const Detail: React.FC = () => {
         })
     }, [rawComments, sortKey])
 
-    const filteredComments = useMemo(() => {
+    const filteredCommentsWithReplies = useMemo(() => {
         const base = [...rawComments]
         const sorted =
             sortKey === 'latest'
@@ -75,6 +78,22 @@ const Detail: React.FC = () => {
             ? sorted.filter((c) => c.reply_ids && c.reply_ids.length > 0)
             : sorted
     }, [rawComments, sortKey, onlyWithReplies])
+
+    const filteredCommentsWithNonManipulated = useMemo(() => {
+        const base = [...rawComments]
+        const sorted =
+            sortKey === 'latest'
+                ? base.sort(
+                      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+                  )
+                : base.sort((a, b) => (b.reactions?.[sortKey] || 0) - (a.reactions?.[sortKey] || 0))
+
+        return onlyWithNonManipulated ? sorted.filter((c) => !c.manipulated) : sorted
+    }, [rawComments, sortKey, onlyWithNonManipulated])
+
+    const handleClusterClick = (id: string) => {
+        console.log('클러스터 클릭됨:', id)
+    }
 
     return (
         <main className='flex flex-col gap-10 items-center justify-center'>
@@ -95,6 +114,9 @@ const Detail: React.FC = () => {
                 <p className='text-base text-zinc-500'>{video.date}</p>
             </div>
 
+            {/* Comment Write Section */}
+            <CommentWriteForm key={TEST_USER.id} user={TEST_USER} commentType='댓글' />
+
             {/* Tab Section */}
             <Tab tab={tab} setTab={setTab} />
 
@@ -107,11 +129,6 @@ const Detail: React.FC = () => {
                         </span>
                         <SortBox sortKey={sortKey} setSortKey={setSortKey} />
                     </div>
-                    <CommentWriteForm
-                        key={TEST_USER.id}
-                        user={TEST_USER}
-                        commentType='정보를 공유해보세요!'
-                    />
                     <div className='flex flex-col gap-7 w-full'>
                         {sortedComments.length === 0 && <CommentNone />}
                         {sortedComments.length > 0 &&
@@ -129,27 +146,43 @@ const Detail: React.FC = () => {
             {tab === 'opinion' && ( // TODO: 이후 클러스터로 변경
                 <>
                     <div className='w-full flex justify-between items-center'>
-                        <span className='text-base font-semibold'>
-                            의견 댓글 {sortedComments.length}개
-                        </span>
-                        <SortBox sortKey={sortKey} setSortKey={setSortKey} />
+                        <div className='flex flex-col gap-1'>
+                            <span className='text-base font-semibold'>
+                                의견 클러스터 {CLUSTERS.length}개
+                            </span>
+                            <span className='text-zinc-500 text-sm'>
+                                편향 방지를 위해 AI가 유사한 의견들을 모아서 무작위로 보여드려요.
+                            </span>
+                        </div>
+                        <Filter
+                            label='조작 댓글 필터링 켜기'
+                            filterValue={onlyWithNonManipulated}
+                            setFilterValue={setOnlyWithNonManipulated}
+                        />
                     </div>
-                    <CommentWriteForm
-                        key={TEST_USER.id}
-                        user={TEST_USER}
-                        commentType='의견을 나눠보세요!'
-                    />
-                    <div className='flex flex-col gap-7 w-full'>
-                        {sortedComments.length === 0 && <CommentNone />}
-                        {sortedComments.length > 0 &&
-                            sortedComments.map((comment) => (
+                    <div className='flex flex-col gap-5 w-full'>
+                        {CLUSTERS.length === 0 && <CommentNone />}
+                        {CLUSTERS.length > 0 &&
+                            CLUSTERS.map((cluster) => (
+                                <ClusterBox
+                                    key={cluster.id}
+                                    cluster={cluster}
+                                    isManipulationFilter={onlyWithNonManipulated}
+                                    onClick={() => handleClusterClick(cluster.id)}
+                                />
+                            ))}
+                    </div>
+                    {/* <div className='flex flex-col gap-7 w-full'>
+                        {filteredCommentsWithNonManipulated.length === 0 && <CommentNone />}
+                        {filteredCommentsWithNonManipulated.length > 0 &&
+                            filteredCommentsWithNonManipulated.map((comment) => (
                                 <Comment
                                     key={comment.comment_id}
                                     comment={comment}
                                     repliesData={comment.replies || []}
                                 />
                             ))}
-                    </div>
+                    </div> */}
                 </>
             )}
 
@@ -157,7 +190,7 @@ const Detail: React.FC = () => {
                 <>
                     <div className='w-full flex justify-between items-center'>
                         <span className='text-base font-semibold'>
-                            질문 {sortedComments.length}개
+                            질문 {filteredCommentsWithReplies.length}개
                         </span>
                         <div className='flex items-center gap-4'>
                             <Filter
@@ -168,15 +201,10 @@ const Detail: React.FC = () => {
                             <SortBox sortKey={sortKey} setSortKey={setSortKey} />
                         </div>
                     </div>
-                    <CommentWriteForm
-                        key={TEST_USER.id}
-                        user={TEST_USER}
-                        commentType='질문을 남겨보세요!'
-                    />
                     <div className='flex flex-col gap-7 w-full'>
-                        {filteredComments.length === 0 && <CommentNone />}
-                        {filteredComments.length > 0 &&
-                            filteredComments.map((comment) => (
+                        {filteredCommentsWithReplies.length === 0 && <CommentNone />}
+                        {filteredCommentsWithReplies.length > 0 &&
+                            filteredCommentsWithReplies.map((comment) => (
                                 <Comment
                                     key={comment.comment_id}
                                     comment={comment}
