@@ -5,6 +5,7 @@ import CommentNone from '../components/commentNone'
 import CommentWriteForm from '../components/commentWriteForm'
 import Tab from '../components/tab'
 import SortBox from '../components/sortBox'
+import Filter from '../components/filter'
 import { COMMENT_DATA_INFO } from '../data/comments/fnCY6ysVkAg/information'
 import { COMMENT_DATA_OPINION } from '../data/comments/fnCY6ysVkAg/opinion'
 import { COMMENT_DATA_QUESTION } from '../data/comments/fnCY6ysVkAg/question'
@@ -19,6 +20,8 @@ const Detail: React.FC = () => {
 
     type SortKey = 'useful' | 'agree' | 'curious' | 'creative' | 'disagree' | 'latest'
     const [sortKey, setSortKey] = useState<SortKey>('useful')
+
+    const [onlyWithReplies, setOnlyWithReplies] = useState(false)
 
     useEffect(() => {
         const newSearchParams = new URLSearchParams(location.search)
@@ -58,6 +61,20 @@ const Detail: React.FC = () => {
             return bVal - aVal
         })
     }, [rawComments, sortKey])
+
+    const filteredComments = useMemo(() => {
+        const base = [...rawComments]
+        const sorted =
+            sortKey === 'latest'
+                ? base.sort(
+                      (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+                  )
+                : base.sort((a, b) => (b.reactions?.[sortKey] || 0) - (a.reactions?.[sortKey] || 0))
+
+        return onlyWithReplies
+            ? sorted.filter((c) => c.reply_ids && c.reply_ids.length > 0)
+            : sorted
+    }, [rawComments, sortKey, onlyWithReplies])
 
     return (
         <main className='flex flex-col gap-10 items-center justify-center'>
@@ -142,7 +159,14 @@ const Detail: React.FC = () => {
                         <span className='text-base font-semibold'>
                             질문 {sortedComments.length}개
                         </span>
-                        <SortBox sortKey={sortKey} setSortKey={setSortKey} />
+                        <div className='flex items-center gap-6'>
+                            <Filter
+                                label='대댓글 달린 댓글만 보기'
+                                filterValue={onlyWithReplies}
+                                setFilterValue={setOnlyWithReplies}
+                            />
+                            <SortBox sortKey={sortKey} setSortKey={setSortKey} />
+                        </div>
                     </div>
                     <CommentWriteForm
                         key={TEST_USER.id}
@@ -150,9 +174,9 @@ const Detail: React.FC = () => {
                         commentType='질문을 남겨보세요!'
                     />
                     <div className='flex flex-col gap-7 w-full'>
-                        {sortedComments.length === 0 && <CommentNone />}
-                        {sortedComments.length > 0 &&
-                            sortedComments.map((comment) => (
+                        {filteredComments.length === 0 && <CommentNone />}
+                        {filteredComments.length > 0 &&
+                            filteredComments.map((comment) => (
                                 <Comment
                                     key={comment.comment_id}
                                     comment={comment}
