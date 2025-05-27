@@ -164,7 +164,7 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData }) => {
                                 {showReplies ? (
                                     <div className='flex flex-row gap-1 items-center'>
                                         <img
-                                            src='/icons/chevron_up.svg'
+                                            src='/icons/chevronUp.svg'
                                             alt='Hide Replies'
                                             className='w-6 h-6'
                                         />
@@ -175,7 +175,7 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData }) => {
                                 ) : (
                                     <div className='flex flex-row gap-1 items-center'>
                                         <img
-                                            src='/icons/chevron_down.svg'
+                                            src='/icons/chevronDown.svg'
                                             alt='Show Replies'
                                             className='w-6 h-6'
                                         />
