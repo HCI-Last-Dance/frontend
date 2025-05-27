@@ -4,6 +4,7 @@ import Comment from '../components/comment'
 import CommentNone from '../components/commentNone'
 import CommentWriteForm from '../components/commentWriteForm'
 import Tab from '../components/tab'
+import SortBox from '../components/sortBox'
 import { COMMENT_DATA_INFO } from '../data/comments/fnCY6ysVkAg/information'
 import { COMMENT_DATA_OPINION } from '../data/comments/fnCY6ysVkAg/opinion'
 import { COMMENT_DATA_QUESTION } from '../data/comments/fnCY6ysVkAg/question'
@@ -15,6 +16,9 @@ const Detail: React.FC = () => {
     const location = useLocation()
     const initialTab = new URLSearchParams(location.search).get('tab') || 'information'
     const [tab, setTab] = useState(initialTab)
+
+    type SortKey = 'useful' | 'agree' | 'curious' | 'creative' | 'disagree' | 'latest'
+    const [sortKey, setSortKey] = useState<SortKey>('useful')
 
     useEffect(() => {
         const newSearchParams = new URLSearchParams(location.search)
@@ -28,7 +32,7 @@ const Detail: React.FC = () => {
             <div className='p-10 text-center text-xl text-red-500'>비디오를 찾을 수 없습니다.</div>
         )
 
-    const COMMENT_DATA = useMemo(() => {
+    const rawComments = useMemo(() => {
         switch (tab) {
             case 'information':
                 return COMMENT_DATA_INFO
@@ -40,6 +44,20 @@ const Detail: React.FC = () => {
                 return COMMENT_DATA_INFO
         }
     }, [tab])
+
+    const sortedComments = useMemo(() => {
+        if (sortKey === 'latest') {
+            return [...rawComments].sort(
+                (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime(),
+            )
+        }
+
+        return [...rawComments].sort((a, b) => {
+            const aVal = a.reactions?.[sortKey as keyof typeof a.reactions] || 0
+            const bVal = b.reactions?.[sortKey as keyof typeof b.reactions] || 0
+            return bVal - aVal
+        })
+    }, [rawComments, sortKey])
 
     return (
         <main className='flex flex-col gap-10 items-center justify-center'>
@@ -66,10 +84,11 @@ const Detail: React.FC = () => {
             {/* Comments Section */}
             {tab === 'information' && (
                 <>
-                    <div className='w-full text-start'>
+                    <div className='w-full flex justify-between items-center'>
                         <span className='text-base font-semibold'>
-                            정보성 댓글 {COMMENT_DATA.length}개
+                            정보성 댓글 {sortedComments.length}개
                         </span>
+                        <SortBox sortKey={sortKey} setSortKey={setSortKey} />
                     </div>
                     <CommentWriteForm
                         key={TEST_USER.id}
@@ -77,9 +96,9 @@ const Detail: React.FC = () => {
                         commentType='정보를 공유해보세요!'
                     />
                     <div className='flex flex-col gap-7 w-full'>
-                        {COMMENT_DATA.length === 0 && <CommentNone />}
-                        {COMMENT_DATA.length > 0 &&
-                            COMMENT_DATA.map((comment) => (
+                        {sortedComments.length === 0 && <CommentNone />}
+                        {sortedComments.length > 0 &&
+                            sortedComments.map((comment) => (
                                 <Comment
                                     key={comment.comment_id}
                                     comment={comment}
@@ -92,10 +111,11 @@ const Detail: React.FC = () => {
 
             {tab === 'opinion' && ( // TODO: 이후 클러스터로 변경
                 <>
-                    <div className='w-full text-start'>
+                    <div className='w-full flex justify-between items-center'>
                         <span className='text-base font-semibold'>
-                            의견 댓글 {COMMENT_DATA.length}개
+                            의견 댓글 {sortedComments.length}개
                         </span>
+                        <SortBox sortKey={sortKey} setSortKey={setSortKey} />
                     </div>
                     <CommentWriteForm
                         key={TEST_USER.id}
@@ -103,9 +123,9 @@ const Detail: React.FC = () => {
                         commentType='의견을 나눠보세요!'
                     />
                     <div className='flex flex-col gap-7 w-full'>
-                        {COMMENT_DATA.length === 0 && <CommentNone />}
-                        {COMMENT_DATA.length > 0 &&
-                            COMMENT_DATA.map((comment) => (
+                        {sortedComments.length === 0 && <CommentNone />}
+                        {sortedComments.length > 0 &&
+                            sortedComments.map((comment) => (
                                 <Comment
                                     key={comment.comment_id}
                                     comment={comment}
@@ -118,10 +138,11 @@ const Detail: React.FC = () => {
 
             {tab === 'question' && (
                 <>
-                    <div className='w-full text-start'>
+                    <div className='w-full flex justify-between items-center'>
                         <span className='text-base font-semibold'>
-                            질문 {COMMENT_DATA.length}개
+                            질문 {sortedComments.length}개
                         </span>
+                        <SortBox sortKey={sortKey} setSortKey={setSortKey} />
                     </div>
                     <CommentWriteForm
                         key={TEST_USER.id}
@@ -129,9 +150,9 @@ const Detail: React.FC = () => {
                         commentType='질문을 남겨보세요!'
                     />
                     <div className='flex flex-col gap-7 w-full'>
-                        {COMMENT_DATA.length === 0 && <CommentNone />}
-                        {COMMENT_DATA.length > 0 &&
-                            COMMENT_DATA.map((comment) => (
+                        {sortedComments.length === 0 && <CommentNone />}
+                        {sortedComments.length > 0 &&
+                            sortedComments.map((comment) => (
                                 <Comment
                                     key={comment.comment_id}
                                     comment={comment}
