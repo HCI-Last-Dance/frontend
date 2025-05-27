@@ -24,12 +24,10 @@ const ClusterBox: React.FC<ClusterBoxProps> = ({ cluster, isManipulationFilter, 
                         <span className='text-xs text-zinc-500'>
                             평균{' '}
                             {getWriteTime(
-                                Math.round(
-                                    getAvgTimeTaken(
-                                        COMMENT_DATA_OPINION,
-                                        cluster.id,
-                                        isManipulationFilter,
-                                    ),
+                                getAvgTimeTaken(
+                                    COMMENT_DATA_OPINION,
+                                    cluster.id,
+                                    isManipulationFilter,
                                 ),
                             )}
                         </span>
