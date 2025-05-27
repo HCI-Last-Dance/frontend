@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useEffect } from 'react'
 import { useLocation, useParams } from 'react-router-dom'
 import Comment from '../components/comment'
+import CommentNone from '../components/commentNone'
 import CommentWriteForm from '../components/commentWriteForm'
 import Tab from '../components/tab'
 import { COMMENT_DATA_INFO } from '../data/comments/fnCY6ysVkAg/information'
@@ -75,13 +76,15 @@ const Detail: React.FC = () => {
             </div>
             <CommentWriteForm key={TEST_USER.id} user={TEST_USER} commentType='댓글' />
             <div className='flex flex-col gap-7 w-full'>
-                {COMMENT_DATA.map((comment) => (
-                    <Comment
-                        key={comment.comment_id}
-                        comment={comment}
-                        repliesData={comment.replies || []}
-                    />
-                ))}
+                {COMMENT_DATA.length === 0 && <CommentNone />}
+                {COMMENT_DATA.length > 0 &&
+                    COMMENT_DATA.map((comment) => (
+                        <Comment
+                            key={comment.comment_id}
+                            comment={comment}
+                            repliesData={comment.replies || []}
+                        />
+                    ))}
                 {/* <Comment
                     key={COMMENT_DATA[0].comment_id}
                     comment={COMMENT_DATA[0]}
