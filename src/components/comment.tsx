@@ -280,32 +280,18 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData, isReply = false
 
             {/* Login Popover - Reaction */}
             {showLoginPopoverReaction && (
-                <div
-                    className='fixed inset-0 z-50 bg-black/30 flex items-center justify-center'
-                    onClick={() => setShowLoginPopoverReaction(false)}
-                >
-                    <div onClick={(e) => e.stopPropagation()}>
-                        <LoginPopover
-                            message='공감하려면'
-                            onCancel={() => setShowLoginPopoverReaction(false)}
-                        />
-                    </div>
-                </div>
+                <LoginPopover
+                    message='공감하려면'
+                    onCancel={() => setShowLoginPopoverReaction(false)}
+                />
             )}
 
             {/* Login Popover - Report */}
             {showLoginPopoverReport && (
-                <div
-                    className='fixed inset-0 z-50 bg-black/30 flex items-center justify-center'
-                    onClick={() => setShowLoginPopoverReport(false)}
-                >
-                    <div onClick={(e) => e.stopPropagation()}>
-                        <LoginPopover
-                            message='신고하려면'
-                            onCancel={() => setShowLoginPopoverReport(false)}
-                        />
-                    </div>
-                </div>
+                <LoginPopover
+                    message='신고하려면'
+                    onCancel={() => setShowLoginPopoverReport(false)}
+                />
             )}
         </div>
     )

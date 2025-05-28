@@ -84,12 +84,10 @@ const CommentWriteForm: React.FC<CommentWriteFormProps> = ({ user, commentType }
 
             {/* Login Popover */}
             {showLoginPopover && (
-                <div className='fixed inset-0 z-50 bg-black/50 flex items-center justify-center'>
-                    <LoginPopover
-                        message='댓글을 작성하려면'
-                        onCancel={() => setShowLoginPopover(false)}
-                    />
-                </div>
+                <LoginPopover
+                    message='댓글을 작성하려면'
+                    onCancel={() => setShowLoginPopover(false)}
+                />
             )}
 
             {/* Toast Notification */}
