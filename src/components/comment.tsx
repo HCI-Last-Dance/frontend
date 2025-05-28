@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import ReportPopover from './reportPopover'
 import Toast from './toast'
+import LoginPopover from './loginPopover'
 import { getWriteTime } from '../utils/getWriteTime'
 import { getTimeAgo } from '../utils/getTimeAgo'
 import type { CommentType, ReplyType } from '../types/comments'
@@ -31,6 +32,9 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData, isReply = false
         message: string
         errorDetail?: string
     } | null>(null)
+    const isUser: boolean = localStorage.getItem('isUser') === 'true'
+    const [showLoginPopoverReaction, setShowLoginPopoverReaction] = useState(false)
+    const [showLoginPopoverReport, setShowLoginPopoverReport] = useState(false)
 
     const defaultReactions: Reaction[] = [
         {
@@ -80,6 +84,10 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData, isReply = false
     )
 
     const toggleReaction = (index: number) => {
+        if (!isUser) {
+            setShowLoginPopoverReaction(true)
+            return
+        }
         setReactions((prev) =>
             prev.map((r, i) =>
                 i === index
@@ -95,7 +103,11 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData, isReply = false
 
     const onClickReport = (e: React.MouseEvent<HTMLImageElement>) => {
         e.stopPropagation()
-        showReport ? setShowReport(false) : setShowReport(true)
+        if (!isUser) {
+            setShowLoginPopoverReport(true)
+            return
+        }
+        setShowReport((prev) => !prev)
     }
 
     const handleReportSubmit = (reason: string, commentID: string) => {
@@ -264,6 +276,36 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData, isReply = false
             {/* Toast Notification */}
             {toast && (
                 <Toast type={toast.type} message={toast.message} errorDetail={toast.errorDetail} />
+            )}
+
+            {/* Login Popover - Reaction */}
+            {showLoginPopoverReaction && (
+                <div
+                    className='fixed inset-0 z-50 bg-black/30 flex items-center justify-center'
+                    onClick={() => setShowLoginPopoverReaction(false)}
+                >
+                    <div onClick={(e) => e.stopPropagation()}>
+                        <LoginPopover
+                            message='공감하려면'
+                            onCancel={() => setShowLoginPopoverReaction(false)}
+                        />
+                    </div>
+                </div>
+            )}
+
+            {/* Login Popover - Report */}
+            {showLoginPopoverReport && (
+                <div
+                    className='fixed inset-0 z-50 bg-black/30 flex items-center justify-center'
+                    onClick={() => setShowLoginPopoverReport(false)}
+                >
+                    <div onClick={(e) => e.stopPropagation()}>
+                        <LoginPopover
+                            message='신고하려면'
+                            onCancel={() => setShowLoginPopoverReport(false)}
+                        />
+                    </div>
+                </div>
             )}
         </div>
     )
