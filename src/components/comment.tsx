@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import ReportPopover from './reportPopover'
 import Toast from './toast'
-import LoginPopover from './loginPopover'
+import AuthPopover from './authPopover'
 import { getWriteTime } from '../utils/getWriteTime'
 import { getTimeAgo } from '../utils/getTimeAgo'
 import type { CommentType, ReplyType } from '../types/comments'
@@ -17,13 +17,24 @@ type Reaction = {
     selectedColorClass: string
 }
 
+type AddCommentType = (
+    newComment: CommentType | { parentCommentId: string; reply: CommentType },
+    tabs?: string[],
+) => void
+
 type CommentProps = {
     comment: CommentType
     repliesData: ReplyType[]
     isReply?: boolean
+    onAddComment?: AddCommentType
 }
 
-const Comment: React.FC<CommentProps> = ({ comment, repliesData, isReply = false }) => {
+const Comment: React.FC<CommentProps> = ({
+    comment,
+    repliesData,
+    isReply = false,
+    onAddComment,
+}) => {
     const [showReplies, setShowReplies] = useState(false)
     const [showReplyForm, setShowReplyForm] = useState(false)
     const [showReport, setShowReport] = useState(false)
@@ -33,8 +44,9 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData, isReply = false
         errorDetail?: string
     } | null>(null)
     const isUser: boolean = localStorage.getItem('isUser') === 'true'
-    const [showLoginPopoverReaction, setShowLoginPopoverReaction] = useState(false)
-    const [showLoginPopoverReport, setShowLoginPopoverReport] = useState(false)
+    const [showAuthPopoverReaction, setShowAuthPopoverReaction] = useState(false)
+    const [showAuthPopoverReport, setShowAuthPopoverReport] = useState(false)
+    const [isReported, setIsReported] = useState(false)
 
     const defaultReactions: Reaction[] = [
         {
@@ -85,7 +97,7 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData, isReply = false
 
     const toggleReaction = (index: number) => {
         if (!isUser) {
-            setShowLoginPopoverReaction(true)
+            setShowAuthPopoverReaction(true)
             return
         }
         setReactions((prev) =>
@@ -104,22 +116,59 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData, isReply = false
     const onClickReport = (e: React.MouseEvent<HTMLImageElement>) => {
         e.stopPropagation()
         if (!isUser) {
-            setShowLoginPopoverReport(true)
+            setShowAuthPopoverReport(true)
             return
         }
         setShowReport((prev) => !prev)
     }
 
-    const handleReportSubmit = (reason: string, commentID: string) => {
-        console.log(`신고 사유: ${reason}, 댓글 ID: ${commentID}`)
+    const handleReportSubmit = (reason: string[], commentID: string) => {
+        console.log(`신고 사유: ${reason.join(', ')}, 댓글 ID: ${commentID}`)
         setShowReport(false)
-        setToast({ type: 'success', message: '신고가 성공적으로 이루어졌습니다.' })
+        setToast({
+            type: 'success',
+            message: '신고가 성공적으로 이루어졌습니다.\n신고하신 댓글은 숨겨집니다.',
+        })
         setTimeout(() => setToast(null), 1500)
+        setIsReported(true)
     }
 
     const handleReportCancel = () => {
         setShowReport(false)
     }
+
+    if (isReported)
+        // Do not show the comment if it is reported, but still show the toast and auth popover
+        return (
+            <>
+                {/* Toast Notification */}
+                {toast && (
+                    <Toast
+                        type={toast.type}
+                        message={toast.message}
+                        errorDetail={toast.errorDetail}
+                    />
+                )}
+
+                {/* Auth Popover - Reaction */}
+                {showAuthPopoverReaction && (
+                    <AuthPopover
+                        type='login'
+                        message='공감하려면 '
+                        onCancel={() => setShowAuthPopoverReaction(false)}
+                    />
+                )}
+
+                {/* Auth Popover - Report */}
+                {showAuthPopoverReport && (
+                    <AuthPopover
+                        type='login'
+                        message='신고하려면 '
+                        onCancel={() => setShowAuthPopoverReport(false)}
+                    />
+                )}
+            </>
+        )
 
     return (
         <div className='flex flex-col w-full'>
@@ -256,7 +305,20 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData, isReply = false
                             isReply={true}
                         />
                     ))}
-                    <CommentWriteForm key={TEST_USER.id} user={TEST_USER} commentType='대댓글' />
+                    <CommentWriteForm
+                        key={TEST_USER.id}
+                        user={TEST_USER}
+                        commentType='대댓글'
+                        parentCommentId={comment.comment_id}
+                        onAddComment={(newReply, tabs) => {
+                            onAddComment?.(newReply, tabs)
+                            setShowReplies(true)
+                        }}
+                        onSuccessWithMessage={(msg) => {
+                            setToast({ type: 'success', message: msg })
+                            setTimeout(() => setToast(null), 1500)
+                        }}
+                    />
                 </div>
             )}
 
@@ -269,6 +331,15 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData, isReply = false
                             key={TEST_USER.id}
                             user={TEST_USER}
                             commentType='대댓글'
+                            parentCommentId={comment.comment_id}
+                            onAddComment={(newReply, tabs) => {
+                                onAddComment?.(newReply, tabs)
+                                setShowReplies(true)
+                            }}
+                            onSuccessWithMessage={(msg) => {
+                                setToast({ type: 'success', message: msg })
+                                setTimeout(() => setToast(null), 1500)
+                            }}
                         />
                     </div>
                 )}
@@ -278,19 +349,21 @@ const Comment: React.FC<CommentProps> = ({ comment, repliesData, isReply = false
                 <Toast type={toast.type} message={toast.message} errorDetail={toast.errorDetail} />
             )}
 
-            {/* Login Popover - Reaction */}
-            {showLoginPopoverReaction && (
-                <LoginPopover
-                    message='공감하려면'
-                    onCancel={() => setShowLoginPopoverReaction(false)}
+            {/* Auth Popover - Reaction */}
+            {showAuthPopoverReaction && (
+                <AuthPopover
+                    type='login'
+                    message='공감하려면 '
+                    onCancel={() => setShowAuthPopoverReaction(false)}
                 />
             )}
 
-            {/* Login Popover - Report */}
-            {showLoginPopoverReport && (
-                <LoginPopover
-                    message='신고하려면'
-                    onCancel={() => setShowLoginPopoverReport(false)}
+            {/* Auth Popover - Report */}
+            {showAuthPopoverReport && (
+                <AuthPopover
+                    type='login'
+                    message='신고하려면 '
+                    onCancel={() => setShowAuthPopoverReport(false)}
                 />
             )}
         </div>
