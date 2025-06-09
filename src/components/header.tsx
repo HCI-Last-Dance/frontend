@@ -1,7 +1,10 @@
 import React, { useState } from 'react'
 import AuthPopover from './authPopover'
+import { useAuth } from '../contexts/authContext'
 
 const Header: React.FC = () => {
+    const { isUser } = useAuth()
+
     const onClickLogin = () => {
         window.location.href = '/login'
     }
@@ -11,8 +14,6 @@ const Header: React.FC = () => {
     const onClickLogout = () => {
         setShowAuthPopover(true)
     }
-
-    const isUser: boolean = localStorage.getItem('isUser') === 'true'
 
     return (
         <header className='flex w-full items-center justify-between px-16 py-6'>
@@ -25,7 +26,7 @@ const Header: React.FC = () => {
             </h1>
 
             {/* Search Bar */}
-            <div className='flex items-center bg-zinc-200 rounded-full px-4 w-[600px]'>
+            <div className='flex items-center bg-zinc-200 rounded-full px-4 max-w-[45dvw] w-full'>
                 <img src='/icons/search.svg' alt='검색' className='w-5 h-5 mr-2' />
                 <input
                     type='text'
@@ -49,7 +50,7 @@ const Header: React.FC = () => {
                     />
                     {/* Logout Button */}
                     <button
-                        className='text-sm px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors'
+                        className='text-sm px-4 py-2 border-[#4F46E5] border text-[#4F46E5] rounded-md hover:bg-[#E0E7FF] transition-colors'
                         onClick={onClickLogout}
                     >
                         로그아웃

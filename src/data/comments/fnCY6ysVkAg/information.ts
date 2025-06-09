@@ -936,8 +936,7 @@ export const COMMENT_DATA_INFO: CommentType[] = [
                 comment_id: 'UgwHECGkANiwLT2U0wV4AaABAg.AGuw6RKiGgbAHRSkqM10qw',
                 author_id: 'UCct8x8sbmcKCASuisTRIueQ',
                 author_name: '@squaresugar',
-                author_profile_image:
-                    'https://yt3.ggpht.com/IwkEZkjvHj4CjMXiLP8j1QXoZz5EjmWM5bPbyJQGgHdC5qR8vZ1rJ1db9tRJ4AbD1uAACeAp5Q=s48-c-k-c0x00ffffff-no-rj',
+                author_profile_image: '',
                 timestamp: '2025-04-27T23:11:34Z',
                 content:
                     '작년에 고3이였던 사람인데 진로 바껴도 학종으로 잘 가더라구요~!! 걱정 마시길',
@@ -2193,28 +2192,6 @@ export const COMMENT_DATA_INFO: CommentType[] = [
         time_taken_to_write: 661,
         tab: ['information', 'opinion'],
         cluster: 'cluster_A',
-        manipulated: false,
-        reply_ids: [],
-        replies: [],
-    },
-    {
-        comment_id: 'UgzBQ4if6fyt4jGuIzt4AaABAg',
-        author_id: 'UCnt8FtX1JuBG_ykcc5IOPGw',
-        author_name: '@곽두팔-y2l',
-        author_profile_image:
-            'https://yt3.ggpht.com/AIpnLO-pnQs4D3znY2-Z-rkB37DjsMRc7Ewj_Ae_6tJQw78gS4YIuFlqQIlSi14PauOUsdciIw=s48-c-k-c0x00ffffff-no-rj',
-        timestamp: '2025-04-17T13:16:56Z',
-        content: '지나가던 09 고1 입니다 네, 마저 가겠습니다❤',
-        reactions: {
-            useful: 96,
-            agree: 49,
-            curious: 94,
-            creative: 2,
-            disagree: 57,
-        },
-        time_taken_to_write: 986,
-        tab: ['information'],
-        cluster: null,
         manipulated: false,
         reply_ids: [],
         replies: [],

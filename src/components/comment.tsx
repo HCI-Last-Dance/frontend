@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useAuth } from '../contexts/authContext'
 import ReportPopover from './reportPopover'
 import Toast from './toast'
 import AuthPopover from './authPopover'
@@ -7,6 +8,7 @@ import { getTimeAgo } from '../utils/getTimeAgo'
 import type { CommentType, ReplyType } from '../types/comments'
 import CommentWriteForm from './commentWriteForm'
 import { TEST_USER } from '../data/users/test'
+import AlertModal from './alertModal'
 
 type Reaction = {
     key: string
@@ -43,7 +45,9 @@ const Comment: React.FC<CommentProps> = ({
         message: string
         errorDetail?: string
     } | null>(null)
-    const isUser: boolean = localStorage.getItem('isUser') === 'true'
+
+    const { isUser } = useAuth()
+
     const [showAuthPopoverReaction, setShowAuthPopoverReaction] = useState(false)
     const [showAuthPopoverReport, setShowAuthPopoverReport] = useState(false)
     const [isReported, setIsReported] = useState(false)
@@ -124,12 +128,21 @@ const Comment: React.FC<CommentProps> = ({
 
     const handleReportSubmit = (reason: string[], commentID: string) => {
         console.log(`신고 사유: ${reason.join(', ')}, 댓글 ID: ${commentID}`)
+        if (reason.length === 0) {
+            setToast({
+                type: 'failure',
+                message: '신고 사유를 선택해주세요.',
+                errorDetail: '신고 사유가 선택되지 않았습니다.',
+            })
+            setTimeout(() => setToast(null), 3000)
+            return
+        }
         setShowReport(false)
         setToast({
             type: 'success',
             message: '신고가 성공적으로 이루어졌습니다.\n신고하신 댓글은 숨겨집니다.',
         })
-        setTimeout(() => setToast(null), 1500)
+        setTimeout(() => setToast(null), 3000)
         setIsReported(true)
     }
 
@@ -191,10 +204,42 @@ const Comment: React.FC<CommentProps> = ({
                         <div className='flex items-center gap-4'>
                             <span className='text-base font-semibold'>{comment.author_name}</span>
                             <div className='flex items-center gap-1'>
-                                <img src='/icons/write.svg' alt='Time Taken' className='w-3 h-3' />
-                                <span className='text-zinc-500 text-sm font-regular'>
-                                    {getWriteTime(comment.time_taken_to_write) || '알 수 없음'}
-                                </span>
+                                {comment.manipulated ? (
+                                    <div className='relative group'>
+                                        <div className='flex items-center gap-1 cursor-default'>
+                                            <img
+                                                src='/icons/alert.svg'
+                                                alt='조작 의심'
+                                                className='w-4 h-4'
+                                            />
+                                            <span className='text-sm font-regular text-red-500'>
+                                                {getWriteTime(comment.time_taken_to_write) ||
+                                                    '알 수 없음'}
+                                            </span>
+                                        </div>
+
+                                        {/* Alert Modal when hover */}
+                                        <div className='hidden group-hover:block'>
+                                            <AlertModal
+                                                timeTaken={getWriteTime(
+                                                    comment.time_taken_to_write,
+                                                )}
+                                            />
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <img
+                                            src='/icons/write.svg'
+                                            alt='작성 시간'
+                                            className='w-3 h-3'
+                                        />
+                                        <span className='text-sm font-regular text-zinc-500'>
+                                            {getWriteTime(comment.time_taken_to_write) ||
+                                                '알 수 없음'}
+                                        </span>
+                                    </>
+                                )}
                             </div>
                         </div>
                         <p className='text-base text-black whitespace-pre-line'>
@@ -316,7 +361,7 @@ const Comment: React.FC<CommentProps> = ({
                         }}
                         onSuccessWithMessage={(msg) => {
                             setToast({ type: 'success', message: msg })
-                            setTimeout(() => setToast(null), 1500)
+                            setTimeout(() => setToast(null), 2500)
                         }}
                     />
                 </div>
@@ -338,7 +383,7 @@ const Comment: React.FC<CommentProps> = ({
                             }}
                             onSuccessWithMessage={(msg) => {
                                 setToast({ type: 'success', message: msg })
-                                setTimeout(() => setToast(null), 1500)
+                                setTimeout(() => setToast(null), 2500)
                             }}
                         />
                     </div>

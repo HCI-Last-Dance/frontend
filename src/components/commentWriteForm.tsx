@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react'
+import { useAuth } from '../contexts/authContext'
 import AuthPopover from './authPopover'
 import Toast from './toast'
 import Loader from './loader'
@@ -34,7 +35,8 @@ const CommentWriteForm: React.FC<CommentWriteFormProps> = ({
     onAddComment,
     onSuccessWithMessage,
 }) => {
-    const isUser: boolean = localStorage.getItem('isUser') === 'true'
+    const { isUser } = useAuth()
+
     const [text, setText] = useState('')
     const [showAuthPopover, setShowAuthPopover] = useState(false)
     const containerRef = useRef<HTMLDivElement>(null)
@@ -60,7 +62,7 @@ const CommentWriteForm: React.FC<CommentWriteFormProps> = ({
                 type: 'failure',
                 message: '댓글 내용을 작성해주세요.',
             })
-            setTimeout(() => setToast(null), 1500)
+            setTimeout(() => setToast(null), 3000)
             return
         }
 
@@ -109,16 +111,16 @@ const CommentWriteForm: React.FC<CommentWriteFormProps> = ({
                     message: '악성 댓글로 감지되어 등록이 제한됩니다.',
                     errorDetail: '부적절한 내용을 제거 후 다시 시도해주세요.',
                 })
-                setTimeout(() => setToast(null), 2000)
+                setTimeout(() => setToast(null), 4000)
                 setText('')
                 return
             } else if (hateAndTabClusterResult[0] === 'error') {
                 setToast({
                     type: 'failure',
                     message: '댓글 등록 중 오류가 발생했습니다.',
-                    errorDetail: '서버와의 통신에 실패했습니다. 잠시 후 다시 시도해주세요.',
+                    errorDetail: '서버 연결을 확인 후 다시 시도해주세요.',
                 })
-                setTimeout(() => setToast(null), 2000)
+                setTimeout(() => setToast(null), 4000)
                 return
             } else if (hateAndTabClusterResult[1] && hateAndTabClusterResult[1].length === 0) {
                 setToast({
@@ -126,7 +128,7 @@ const CommentWriteForm: React.FC<CommentWriteFormProps> = ({
                     message: '너무 짧거나 관계 없는 댓글입니다.',
                     errorDetail: '댓글을 더 구체적으로 작성해주세요.',
                 })
-                setTimeout(() => setToast(null), 2000)
+                setTimeout(() => setToast(null), 4000)
                 setText('')
                 return
             }
@@ -150,6 +152,7 @@ const CommentWriteForm: React.FC<CommentWriteFormProps> = ({
                 manipulated: false,
                 tab: hateAndTabClusterResult[1],
                 cluster: hateAndTabClusterResult[2] || null,
+                isMine: true,
             }
 
             onAddComment(
@@ -171,7 +174,7 @@ const CommentWriteForm: React.FC<CommentWriteFormProps> = ({
                 type: 'success',
                 message: `댓글이 ${tabLabels} 탭에 등록되었습니다.`,
             })
-            setTimeout(() => setToast(null), 1500)
+            setTimeout(() => setToast(null), 4000)
             setText('')
         }
     }
