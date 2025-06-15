@@ -192,7 +192,9 @@ const Comment: React.FC<CommentProps> = ({
                     <img
                         src={comment.author_profile_image || '/icons/profile.svg'}
                         alt='Profile'
-                        className='w-10 h-10 rounded-full object-cover'
+                        className={
+                            `rounded-full object-cover` + (isReply ? 'w-8 h-8' : 'w-10 h-10')
+                        }
                         onError={(e) => {
                             const target = e.currentTarget
                             if (target.src !== window.location.origin + '/icons/profile.svg') {
