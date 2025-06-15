@@ -9,7 +9,7 @@ import useTimer from '../hooks/useTimer'
 
 type CommentWriteFormProps = {
     user: UserType
-    commentType: string // 예: '댓글', '대댓글'
+    commentType: '댓글' | '대댓글' // 예: '댓글', '대댓글'
     parentCommentId?: string // 대댓글 작성 시 필요
     onAddComment?: (newComment: any, tabs?: string[], clusterId?: string | null) => void
     onSuccessWithMessage?: (message: string) => void
@@ -199,7 +199,9 @@ const CommentWriteForm: React.FC<CommentWriteFormProps> = ({
             <img
                 src={user.profile_image}
                 alt='User'
-                className='w-10 h-10 rounded-full object-cover'
+                className={
+                    `rounded-full object-cover` + (commentType == '댓글' ? 'w-10 h-10' : 'w-8 h-8')
+                }
             />
 
             <div
