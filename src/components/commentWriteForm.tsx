@@ -49,10 +49,6 @@ const CommentWriteForm: React.FC<CommentWriteFormProps> = ({
     const [loadingMessage, setLoadingMessage] = useState('')
 
     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        if (!isUser) {
-            setShowAuthPopover(true)
-            return
-        }
         setText(e.target.value)
     }
 
@@ -189,7 +185,15 @@ const CommentWriteForm: React.FC<CommentWriteFormProps> = ({
                 className='w-10 h-10 rounded-full object-cover'
             />
 
-            <div className='relative flex-1 bg-zinc-100 rounded-md px-4 py-3 h-[100px]'>
+            <div
+                className='relative flex-1 bg-zinc-100 rounded-md px-4 py-3 h-[100px]'
+                onClick={() => {
+                    if (!isUser) {
+                        setShowAuthPopover(true)
+                        return
+                    }
+                }}
+            >
                 <textarea
                     value={text}
                     onChange={handleChange}
