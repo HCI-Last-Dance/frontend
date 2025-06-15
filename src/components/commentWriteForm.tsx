@@ -40,7 +40,9 @@ const CommentWriteForm: React.FC<CommentWriteFormProps> = ({
     const { spentTime, resetTimer } = useTimer()
 
     useEffect(() => {
-        resetTimer()
+        if (commentType === '댓글') {
+            resetTimer()
+        }
     }, [])
 
     const [text, setText] = useState('')
