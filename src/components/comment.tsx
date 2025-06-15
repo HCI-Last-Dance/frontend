@@ -275,20 +275,24 @@ const Comment: React.FC<CommentProps> = ({
                                 <button
                                     key={r.key}
                                     onClick={() => toggleReaction(i)}
-                                    className={`flex items-center gap-1 border rounded-md px-[3px] py-[2px] transition w-fit ${
-                                        r.selected ? `${r.selectedColorClass}` : r.colorClass
-                                    }`}
+                                    className={`flex items-center gap-1 border rounded-md px-[6px] py-[2px] transition w-fit
+                                  ${r.selected ? `${r.selectedColorClass}` : r.colorClass}
+                                  hover:brightness-95 active:scale-95`}
                                 >
                                     <img src={r.iconSrc} alt={r.label} className='w-4 h-4' />
                                     <span className='font-regular text-[13px]'>{r.label}</span>
-                                    <span className='font-regular text-[13px]'>({r.count})</span>
+                                    <span
+                                        className={`text-[13px] font-regular ${r.selected ? 'text-[#337CED]' : 'text-zinc-600'}`}
+                                    >
+                                        {r.count}
+                                    </span>
                                 </button>
                             ))}
                         </div>
 
                         {/* Reply toggle */}
                         {!isReply && comment.reply_ids && comment.reply_ids.length > 0 ? (
-                            <div className='mt-2 text-sm text-gray-600 cursor-pointer select-none'>
+                            <div className='mt-2 text-sm text-gray-600 select-none'>
                                 <div
                                     className='inline-flex items-center gap-1 px-2 py-1 rounded-md cursor-pointer hover:bg-zinc-100 transition w-fit'
                                     onClick={() => setShowReplies(!showReplies)}
