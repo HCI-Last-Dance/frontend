@@ -40,6 +40,8 @@ const Comment: React.FC<CommentProps> = ({
     const [showReplies, setShowReplies] = useState(false)
     const [showReplyForm, setShowReplyForm] = useState(false)
     const [showReport, setShowReport] = useState(false)
+    const [showFullCommentContent, setShowFullCommentContent] = useState(false)
+    const [showFullReplies, setShowFullReplies] = useState(false)
     const [toast, setToast] = useState<{
         type: 'success' | 'failure'
         message: string
@@ -191,7 +193,9 @@ const Comment: React.FC<CommentProps> = ({
                     <img
                         src={comment.author_profile_image || '/icons/profile.svg'}
                         alt='Profile'
-                        className='w-10 h-10 rounded-full object-cover'
+                        className={
+                            `rounded-full object-cover` + (isReply ? 'w-8 h-8' : 'w-10 h-10')
+                        }
                         onError={(e) => {
                             const target = e.currentTarget
                             if (target.src !== window.location.origin + '/icons/profile.svg') {
@@ -243,7 +247,26 @@ const Comment: React.FC<CommentProps> = ({
                             </div>
                         </div>
                         <p className='text-base text-black whitespace-pre-line'>
-                            {comment.content}
+                            {showFullCommentContent
+                                ? comment.content
+                                : comment.content.slice(0, 200)}
+                            {comment.content.length > 200 && '...'}
+                            {comment.content.length > 200 && !showFullCommentContent && (
+                                <span
+                                    className='text-base text-zinc-500 cursor-pointer hover:underline'
+                                    onClick={() => setShowFullCommentContent(true)}
+                                >
+                                    자세히 보기
+                                </span>
+                            )}
+                            {showFullCommentContent && (
+                                <span
+                                    className='text-base text-zinc-500 cursor-pointer hover:underline'
+                                    onClick={() => setShowFullCommentContent(false)}
+                                >
+                                    접기
+                                </span>
+                            )}
                         </p>
 
                         {/* Reactions */}
@@ -252,51 +275,44 @@ const Comment: React.FC<CommentProps> = ({
                                 <button
                                     key={r.key}
                                     onClick={() => toggleReaction(i)}
-                                    className={`flex items-center gap-1 border rounded-md px-[3px] py-[2px] transition w-fit ${
-                                        r.selected ? `${r.selectedColorClass}` : r.colorClass
-                                    }`}
+                                    className={`flex items-center gap-1 border rounded-md px-[6px] py-[2px] transition w-fit
+                                  ${r.selected ? `${r.selectedColorClass}` : r.colorClass}
+                                  hover:brightness-95 active:scale-95`}
                                 >
                                     <img src={r.iconSrc} alt={r.label} className='w-4 h-4' />
                                     <span className='font-regular text-[13px]'>{r.label}</span>
-                                    <span className='font-regular text-[13px]'>({r.count})</span>
+                                    <span
+                                        className={`text-[13px] font-regular ${r.selected ? 'text-[#337CED]' : 'text-zinc-600'}`}
+                                    >
+                                        {r.count}
+                                    </span>
                                 </button>
                             ))}
                         </div>
 
                         {/* Reply toggle */}
                         {!isReply && comment.reply_ids && comment.reply_ids.length > 0 ? (
-                            <div
-                                className='mt-2 text-sm text-gray-600 cursor-pointer select-none'
-                                onClick={() => setShowReplies(!showReplies)}
-                            >
-                                {showReplies ? (
-                                    <div className='flex flex-row gap-1 items-center'>
-                                        <img
-                                            src='/icons/chevronUp.svg'
-                                            alt='Hide Replies'
-                                            className='w-6 h-6'
-                                        />
-                                        <span className='font-regular text-sm text-zinc-900'>
-                                            대댓글 ({comment.reply_ids.length})
-                                        </span>
-                                    </div>
-                                ) : (
-                                    <div className='flex flex-row gap-1 items-center'>
-                                        <img
-                                            src='/icons/chevronDown.svg'
-                                            alt='Show Replies'
-                                            className='w-6 h-6'
-                                        />
-                                        <span className='font-regular text-sm text-zinc-900'>
-                                            대댓글 ({comment.reply_ids.length})
-                                        </span>
-                                    </div>
-                                )}
+                            <div className='mt-2 text-sm text-gray-600 select-none'>
+                                <div
+                                    className='inline-flex items-center gap-1 px-2 py-1 rounded-md cursor-pointer hover:bg-zinc-100 transition w-fit'
+                                    onClick={() => setShowReplies(!showReplies)}
+                                >
+                                    <img
+                                        src='/icons/chevronDown.svg'
+                                        alt='Toggle Replies'
+                                        className={`w-6 h-6 transform transition-transform duration-200 ${
+                                            showReplies ? 'rotate-180' : ''
+                                        }`}
+                                    />
+                                    <span className='font-regular text-sm text-zinc-900'>
+                                        대댓글 ({comment.reply_ids.length})
+                                    </span>
+                                </div>
                             </div>
                         ) : (
                             !isReply && (
                                 <div
-                                    className='mt-2 text-sm text-gray-600 cursor-pointer select-none flex items-center gap-2 w-fit'
+                                    className='mt-2 text-sm text-gray-600 cursor-pointer select-none flex items-center gap-2 w-fit px-2 py-1 rounded-md hover:bg-zinc-100 transition'
                                     onClick={() => setShowReplyForm((prev) => !prev)}
                                 >
                                     <img
@@ -342,14 +358,27 @@ const Comment: React.FC<CommentProps> = ({
             {/* Reply Comments */}
             {showReplies && comment.reply_ids && comment.reply_ids.length > 0 && (
                 <div className='flex flex-col gap-7 mt-5 ml-[60px]'>
-                    {repliesData?.map((reply) => (
-                        <Comment
-                            key={reply.comment_id}
-                            comment={reply}
-                            repliesData={[]}
-                            isReply={true}
-                        />
-                    ))}
+                    {repliesData
+                        ?.slice(0, showFullReplies ? comment.reply_ids.length : 6)
+                        .map((reply) => (
+                            <Comment
+                                key={reply.comment_id}
+                                comment={reply}
+                                repliesData={[]}
+                                isReply={true}
+                            />
+                        ))}
+                    {comment.reply_ids.length > 6 && !showFullReplies && (
+                        <div
+                            className='mt-2 text-sm text-gray-600 cursor-pointer select-none flex items-center gap-2 w-fit px-2 py-1 rounded-md hover:bg-zinc-100 transition'
+                            onClick={() => setShowFullReplies(true)}
+                        >
+                            <img src='/icons/curvedArrow.svg' alt='Reply' className='w-5 h-4' />
+                            <span className='text-sm text-zinc-900 font-medium mt-1'>
+                                대댓글 더보기 ({comment.reply_ids.length - 6})
+                            </span>
+                        </div>
+                    )}
                     <CommentWriteForm
                         key={TEST_USER.id}
                         user={TEST_USER}

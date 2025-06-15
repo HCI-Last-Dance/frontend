@@ -1,14 +1,15 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { useAuth } from '../contexts/authContext'
 import AuthPopover from './authPopover'
 import Toast from './toast'
 import Loader from './loader'
 import type { UserType } from '../types/users'
 import { checkHateAndTabCluster } from '../utils/checkHateAndTabCluster'
+import useTimer from '../hooks/useTimer'
 
 type CommentWriteFormProps = {
     user: UserType
-    commentType: string // 예: '댓글', '대댓글'
+    commentType: '댓글' | '대댓글' // 예: '댓글', '대댓글'
     parentCommentId?: string // 대댓글 작성 시 필요
     onAddComment?: (newComment: any, tabs?: string[], clusterId?: string | null) => void
     onSuccessWithMessage?: (message: string) => void
@@ -36,6 +37,13 @@ const CommentWriteForm: React.FC<CommentWriteFormProps> = ({
     onSuccessWithMessage,
 }) => {
     const { isUser } = useAuth()
+    const { spentTime, resetTimer } = useTimer()
+
+    useEffect(() => {
+        if (commentType === '댓글') {
+            resetTimer()
+        }
+    }, [])
 
     const [text, setText] = useState('')
     const [showAuthPopover, setShowAuthPopover] = useState(false)
@@ -48,11 +56,7 @@ const CommentWriteForm: React.FC<CommentWriteFormProps> = ({
     const [isLoading, setIsLoading] = useState(false)
     const [loadingMessage, setLoadingMessage] = useState('')
 
-    const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        if (!isUser) {
-            setShowAuthPopover(true)
-            return
-        }
+    const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
         setText(e.target.value)
     }
 
@@ -82,7 +86,7 @@ const CommentWriteForm: React.FC<CommentWriteFormProps> = ({
                     creative: 0,
                     disagree: 0,
                 },
-                time_taken_to_write: Math.floor(Math.random() * 200) + 1, // 1초에서 200초 사이의 랜덤 시간
+                time_taken_to_write: spentTime,
                 manipulated: false,
             }
 
@@ -92,6 +96,7 @@ const CommentWriteForm: React.FC<CommentWriteFormProps> = ({
                 onSuccessWithMessage('대댓글이 등록되었습니다.')
             }
             setText('')
+            resetTimer()
             return
         } else if (onAddComment) {
             // 상위 댓글 작성 시
@@ -148,7 +153,7 @@ const CommentWriteForm: React.FC<CommentWriteFormProps> = ({
                     creative: 0,
                     disagree: 0,
                 },
-                time_taken_to_write: Math.floor(Math.random() * 200) + 1, // 1초에서 200초 사이의 랜덤 시간
+                time_taken_to_write: spentTime,
                 manipulated: false,
                 tab: hateAndTabClusterResult[1],
                 cluster: hateAndTabClusterResult[2] || null,
@@ -176,6 +181,14 @@ const CommentWriteForm: React.FC<CommentWriteFormProps> = ({
             })
             setTimeout(() => setToast(null), 4000)
             setText('')
+            resetTimer()
+        }
+    }
+
+    const onClickCommentArea = () => {
+        if (!isUser) {
+            setShowAuthPopover(true)
+            return
         }
     }
 
@@ -186,13 +199,18 @@ const CommentWriteForm: React.FC<CommentWriteFormProps> = ({
             <img
                 src={user.profile_image}
                 alt='User'
-                className='w-10 h-10 rounded-full object-cover'
+                className={
+                    `rounded-full object-cover` + (commentType == '댓글' ? 'w-10 h-10' : 'w-8 h-8')
+                }
             />
 
-            <div className='relative flex-1 bg-zinc-100 rounded-md px-4 py-3 h-[100px]'>
+            <div
+                className='relative flex-1 bg-zinc-100 rounded-md px-4 py-3 h-[100px]'
+                onClick={onClickCommentArea}
+            >
                 <textarea
                     value={text}
-                    onChange={handleChange}
+                    onChange={handleTextChange}
                     placeholder={
                         isUser
                             ? `${user.name} 님의 ${commentType}을 남겨보세요!`
