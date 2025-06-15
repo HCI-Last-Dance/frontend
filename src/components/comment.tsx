@@ -40,6 +40,7 @@ const Comment: React.FC<CommentProps> = ({
     const [showReplies, setShowReplies] = useState(false)
     const [showReplyForm, setShowReplyForm] = useState(false)
     const [showReport, setShowReport] = useState(false)
+    const [showFullComment, setShowFullComment] = useState(false)
     const [toast, setToast] = useState<{
         type: 'success' | 'failure'
         message: string
@@ -243,7 +244,24 @@ const Comment: React.FC<CommentProps> = ({
                             </div>
                         </div>
                         <p className='text-base text-black whitespace-pre-line'>
-                            {comment.content}
+                            {showFullComment ? comment.content : comment.content.slice(0, 200)}
+                            {comment.content.length > 200 && '...'}
+                            {comment.content.length > 200 && !showFullComment && (
+                                <span
+                                    className='text-base text-zinc-500 cursor-pointer hover:underline'
+                                    onClick={() => setShowFullComment(true)}
+                                >
+                                    자세히 보기
+                                </span>
+                            )}
+                            {showFullComment && (
+                                <span
+                                    className='text-base text-zinc-500 cursor-pointer hover:underline'
+                                    onClick={() => setShowFullComment(false)}
+                                >
+                                    접기
+                                </span>
+                            )}
                         </p>
 
                         {/* Reactions */}
