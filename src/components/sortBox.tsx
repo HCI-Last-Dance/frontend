@@ -34,7 +34,11 @@ const SortBox: React.FC<SortBoxProps> = ({ sortKey, setSortKey }) => {
                     />
                     <span className='text-sm text-zinc-950'>{selectedLabel}</span>
                 </div>
-                <img src='/icons/chevronDown.svg' alt='chevron down' className='w-4 h-4' />
+                <img
+                    src='/icons/chevronDown.svg'
+                    alt='chevron down'
+                    className={`w-4 h-4 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+                />
             </button>
 
             {open && (
