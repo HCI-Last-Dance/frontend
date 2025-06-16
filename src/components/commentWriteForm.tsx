@@ -7,6 +7,8 @@ import type { UserType } from '../types/users'
 import { checkHateAndTabCluster } from '../utils/checkHateAndTabCluster'
 import useTimer from '../hooks/useTimer'
 
+const MANIPULATED_COMMENT_LENGTH_PER_SECOND = 15
+
 type CommentWriteFormProps = {
     user: UserType
     commentType: '댓글' | '대댓글' // 예: '댓글', '대댓글'
@@ -87,7 +89,7 @@ const CommentWriteForm: React.FC<CommentWriteFormProps> = ({
                     disagree: 0,
                 },
                 time_taken_to_write: spentTime,
-                manipulated: false,
+                manipulated: text.length / spentTime > MANIPULATED_COMMENT_LENGTH_PER_SECOND,
             }
 
             onAddComment({ parentCommentId, reply: newComment })
@@ -154,7 +156,7 @@ const CommentWriteForm: React.FC<CommentWriteFormProps> = ({
                     disagree: 0,
                 },
                 time_taken_to_write: spentTime,
-                manipulated: false,
+                manipulated: text.length / spentTime > MANIPULATED_COMMENT_LENGTH_PER_SECOND,
                 tab: hateAndTabClusterResult[1],
                 cluster: hateAndTabClusterResult[2] || null,
                 isMine: true,
