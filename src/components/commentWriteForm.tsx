@@ -102,7 +102,7 @@ const CommentWriteForm: React.FC<CommentWriteFormProps> = ({
             // 상위 댓글 작성 시
             setIsLoading(true)
             setLoadingMessage(
-                `${user.name} 님의 ${text.slice(0, 10)}... 댓글을 AI가 분석하고 있습니다. 잠시만 기다려주세요.`,
+                `${user.name} 님의 "${text.slice(0, 10)}..." 댓글을 AI가 분석하고 있습니다. 잠시만 기다려주세요.`,
             )
             const hateAndTabClusterResult: [string, string[], string | null] | ['error'] =
                 await checkHateAndTabCluster(text)

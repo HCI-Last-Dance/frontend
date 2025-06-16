@@ -370,7 +370,7 @@ const Comment: React.FC<CommentProps> = ({
                         ))}
                     {comment.reply_ids.length > 6 && !showFullReplies && (
                         <div
-                            className='mt-2 text-sm text-gray-600 cursor-pointer select-none flex items-center gap-2 w-fit px-2 py-1 rounded-md hover:bg-zinc-100 transition'
+                            className='mt-[-5px] text-sm text-gray-600 cursor-pointer select-none flex items-center gap-2 w-fit px-2 py-1 rounded-md hover:bg-zinc-100 transition'
                             onClick={() => setShowFullReplies(true)}
                         >
                             <img src='/icons/curvedArrow.svg' alt='Reply' className='w-5 h-4' />
